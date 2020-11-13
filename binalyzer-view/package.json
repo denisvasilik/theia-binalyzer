@@ -1,0 +1,22 @@
+{
+  "name": "binalyzer-view",
+  "version": "0.0.0",
+  "dependencies": {
+    "@theia/core": "^1.4.0"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/binalyzer-view-frontend-module"
+    }
+  ],
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc -w"
+  }
+}
