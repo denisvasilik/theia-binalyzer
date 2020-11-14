@@ -13,19 +13,20 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import "../../src/browser/styles/index.css";
 
-import { ContainerModule } from 'inversify';
-import { BinalyzerViewService } from './binalyzer-view-service';
-import { BinalyzerFrontendApplicationContribution } from './binalyzer-frontend-application-contribution';
-import { WidgetFactory } from '@theia/core/lib/browser/widget-manager';
-import {
-    FrontendApplicationContribution,
-    bindViewContribution,
-} from '@theia/core/lib/browser';
-import { TabBarToolbarContribution } from '@theia/core/lib/browser/shell/tab-bar-toolbar';
-import { BinalyzerViewWidget } from './binalyzer-view-widget';
-import '../../src/browser/styles/index.css';
-import { BinalyzerSessionWidget, BinalyzerSessionWidgetFactory } from './binalyzer-session-widget';
+import { bindViewContribution, FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
+import { TabBarToolbarContribution } from "@theia/core/lib/browser/shell/tab-bar-toolbar";
+import { WidgetFactory } from "@theia/core/lib/browser/widget-manager";
+import { ContainerModule } from "inversify";
+
+import { BinalyzerPath, BinalyzerService } from "../common/binalyzer-service";
+import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
+import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
+import { BinalyzerSessionWidget, BinalyzerSessionWidgetFactory } from "./binalyzer-session-widget";
+import { BinalyzerViewService } from "./binalyzer-view-service";
+import { BinalyzerViewWidget } from "./binalyzer-view-widget";
+
 
 export default new ContainerModule(bind => {
     bind(BinalyzerSessionWidgetFactory).toDynamicValue(({ container }) =>
@@ -36,6 +37,11 @@ export default new ContainerModule(bind => {
         id: BinalyzerViewWidget.ID,
         createWidget: () => BinalyzerViewWidget.createWidget(container)
     })).inSingletonScope();
+
+    bind(BinalyzerConfigurationManager).toSelf().inSingletonScope();
+
+    bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
+
 
     bind(BinalyzerViewService).toSelf().inSingletonScope();
     bind(WidgetFactory).toService(BinalyzerViewService);
