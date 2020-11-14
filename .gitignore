@@ -9,6 +9,7 @@ npm-debug.log
 yarn-error.log
 plugins/
 *.log
+yarn.lock
 
 examples/browser-app/**
 !examples/browser-app/package.json
