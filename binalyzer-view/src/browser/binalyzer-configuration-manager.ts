@@ -270,18 +270,17 @@ export class BinalyzerConfigurationManager {
         } else { // fallback
             uri = new URI(model.workspaceFolderUri).resolve(`${this.preferenceConfigurations.getPaths()[0]}/binalyzer.json`);
         }
-        const binalyzerType = await this.selectBinalyzerType();
-        const configurations = binalyzerType ? await this.provideBinalyzerConfigurations(binalyzerType, model.workspaceFolderUri) : [];
-        const content = this.getInitialConfigurationContent(configurations);
-        const fileStat = await this.filesystem.getFileStat(uri.toString());
+        const content = this.getInitialConfigurationContent();
+        let fileStat = await this.filesystem.getFileStat(uri.toString());
         if (!fileStat) {
-            throw new Error(`file not found: ${uri.toString()}`);
-        }
-        try {
-            await this.filesystem.setContent(fileStat, content);
-        } catch (e) {
-            if (!FileSystemError.FileExists.is(e)) {
-                throw e;
+            fileStat = await this.filesystem.createFile(uri.toString());
+
+            try {
+                await this.filesystem.setContent(fileStat, content);
+            } catch (e) {
+                if (!FileSystemError.FileExists.is(e)) {
+                    throw e;
+                }
             }
         }
         return uri;
@@ -295,12 +294,12 @@ export class BinalyzerConfigurationManager {
         await WaitUntilEvent.fire(this.onWillProvideBinalyzerConfigurationEmitter, {});
     }
 
-    protected getInitialConfigurationContent(initialConfigurations: BinalyzerConfiguration[]): string {
+    protected getInitialConfigurationContent(): string {
         return `{
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
   "version": "0.2.0",
-  "configurations": ${JSON.stringify(initialConfigurations, undefined, '  ').split('\n').map(line => '  ' + line).join('\n').trim()}
+  "configurations":
 }
 `;
     }
