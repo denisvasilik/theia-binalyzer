@@ -13,14 +13,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { ReactWidget } from "@theia/core/lib/browser";
+import { CommandRegistry, Disposable } from "@theia/core/lib/common";
+import URI from "@theia/core/lib/common/uri";
+import { WorkspaceService } from "@theia/workspace/lib/browser";
+import { inject, injectable, postConstruct } from "inversify";
+import * as React from "react";
 
-import * as React from 'react';
-import { injectable, inject, postConstruct } from 'inversify';
-import { Disposable } from '@theia/core/lib/common';
-import { ReactWidget } from '@theia/core/lib/browser';
-import { WorkspaceService } from '@theia/workspace/lib/browser';
-import { BinalyzerViewModel } from './binalyzer-view-model';
-import { CommandRegistry } from '@theia/core/lib/common';
+import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
+import { BinalyzerSessionOptions } from "./binalyzer-session-options";
+import { BinalyzerViewModel } from "./binalyzer-view-model";
+
 
 @injectable()
 export class BinalyzerConfigurationWidget extends ReactWidget {
@@ -31,12 +34,16 @@ export class BinalyzerConfigurationWidget extends ReactWidget {
     @inject(BinalyzerViewModel)
     protected readonly viewModel: BinalyzerViewModel;
 
+    @inject(BinalyzerConfigurationManager)
+    protected readonly manager: BinalyzerConfigurationManager;
+
     @inject(WorkspaceService)
     protected readonly workspaceService: WorkspaceService;
 
     @postConstruct()
     protected init(): void {
         this.addClass('binalyzer-toolbar');
+        this.toDispose.push(this.manager.onDidChange(() => this.update()));
         this.toDispose.push(this.workspaceService.onWorkspaceChanged(() => this.update()));
         this.toDispose.push(this.workspaceService.onWorkspaceLocationChanged(() => this.update()));
         this.scrollOptions = undefined;
@@ -56,7 +63,7 @@ export class BinalyzerConfigurationWidget extends ReactWidget {
     render(): React.ReactNode {
         const { options } = this;
         return <React.Fragment>
-            <select className='theia-select debug-configuration' value={this.currentValue} onChange={this.setCurrentConfiguration}>
+            <select className='theia-select binalyzer-configuration' value={this.currentValue} onChange={this.setCurrentConfiguration}>
                 {options.length ? options : <option value='__NO_CONF__'>No Configurations</option>}
                 <option disabled>{'Add Configuration...'.replace(/./g, '-')}</option>
                 <option value='__ADD_CONF__'>Add Configuration...</option>
@@ -64,15 +71,39 @@ export class BinalyzerConfigurationWidget extends ReactWidget {
         </React.Fragment>;
     }
     protected get currentValue(): string {
-        return '__NO_CONF__';
+        const { current } = this.manager;
+        return current ? this.toValue(current) : '__NO_CONF__';
     }
     protected get options(): React.ReactNode[] {
-        return []
+        return Array.from(this.manager.all).map((options, index) =>
+            <option key={index} value={this.toValue(options)}>{this.toName(options)}</option>
+        );
+    }
+    protected toValue({ configuration, workspaceFolderUri }: BinalyzerSessionOptions): string {
+        if (!workspaceFolderUri) {
+            return configuration.name;
+        }
+        return configuration.name + '__CONF__' + workspaceFolderUri;
+    }
+    protected toName({ configuration, workspaceFolderUri }: BinalyzerSessionOptions): string {
+        if (!workspaceFolderUri || !this.workspaceService.isMultiRootWorkspaceOpened) {
+            return configuration.name;
+        }
+        return configuration.name + ' (' + new URI(workspaceFolderUri).path.base + ')';
     }
 
-    protected readonly setCurrentConfiguration = (event: React.ChangeEvent<HTMLSelectElement>) => {};
-    protected readonly start = () => {};
-    protected readonly openConfiguration = () => {};
-    protected readonly openConsole = () => {};
+    protected readonly setCurrentConfiguration = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.currentTarget.value;
+        if (value === '__ADD_CONF__') {
+            this.manager.addConfiguration();
+        } else {
+            const [name, workspaceFolderUri] = value.split('__CONF__');
+            this.manager.current = this.manager.find(name, workspaceFolderUri);
+        }
+    }
+
+    protected readonly start = () => { };
+
+    protected readonly openConfiguration = () => this.manager.openConfiguration();
 
 }

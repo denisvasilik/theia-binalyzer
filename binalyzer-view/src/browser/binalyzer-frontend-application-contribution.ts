@@ -13,17 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { LabelProvider } from "@theia/core/lib/browser";
+import { FrontendApplication, FrontendApplicationContribution } from "@theia/core/lib/browser/frontend-application";
+import { TabBarToolbarContribution, TabBarToolbarRegistry } from "@theia/core/lib/browser/shell/tab-bar-toolbar";
+import { AbstractViewContribution } from "@theia/core/lib/browser/shell/view-contribution";
+import { Widget } from "@theia/core/lib/browser/widgets";
+import { Command, CommandRegistry } from "@theia/core/lib/common/command";
+import { OS } from "@theia/core/lib/common/os";
+import { inject, injectable } from "inversify";
 
-import { inject, injectable } from 'inversify';
-import { AbstractViewContribution } from '@theia/core/lib/browser/shell/view-contribution';
-import { FrontendApplicationContribution, FrontendApplication } from '@theia/core/lib/browser/frontend-application';
-import { Command, CommandRegistry } from '@theia/core/lib/common/command';
-import { TabBarToolbarContribution, TabBarToolbarRegistry } from '@theia/core/lib/browser/shell/tab-bar-toolbar';
-import { Widget } from '@theia/core/lib/browser/widgets';
-import { BinalyzerViewWidget } from './binalyzer-view-widget';
-import { OS } from '@theia/core/lib/common/os';
-import { LabelProvider } from '@theia/core/lib/browser';
-import { BinalyzerViewService } from './binalyzer-view-service';
+import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
+import { BinalyzerViewService } from "./binalyzer-view-service";
+import { BinalyzerViewWidget } from "./binalyzer-view-widget";
 
 export const BINALYZER_WIDGET_FACTORY_ID = 'binalyzer-view';
 
@@ -49,6 +50,9 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
 
     @inject(BinalyzerViewService) protected readonly binalyzerViewService: BinalyzerViewService;
 
+    @inject(BinalyzerConfigurationManager)
+    protected readonly configurations: BinalyzerConfigurationManager;
+
     constructor() {
         super({
             widgetId: BINALYZER_WIDGET_FACTORY_ID,
@@ -66,6 +70,10 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
 
     async initializeLayout(app: FrontendApplication): Promise<void> {
         await this.openView();
+    }
+
+    async onStart(): Promise<void> {
+        this.configurations.load();
     }
 
     registerCommands(commands: CommandRegistry): void {
