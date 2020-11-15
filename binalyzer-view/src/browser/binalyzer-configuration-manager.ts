@@ -262,7 +262,7 @@ export class BinalyzerConfigurationManager {
         });
     }
     protected async doCreate(model: BinalyzerConfigurationModel): Promise<URI> {
-        await this.preferences.set('binalyzer', {}); // create dummy launch.json in the correct place
+        await this.preferences.set('binalyzer', {}); // create dummy binalyzer.json in the correct place
         const { configUri } = this.preferences.resolve('binalyzer'); // get uri to write content to it
         let uri: URI;
         if (configUri && configUri.path.base === 'binalyzer.json') {
@@ -302,19 +302,6 @@ export class BinalyzerConfigurationManager {
   "configurations":
 }
 `;
-    }
-
-    protected async selectBinalyzerType(): Promise<string | undefined> {
-        const widget = this.editorManager.currentEditor;
-        if (!widget) {
-            return undefined;
-        }
-        const { languageId } = widget.editor.document;
-        const binalyzergers = await this.binalyzer.getBinalyzergersForLanguage(languageId);
-        return this.quickPick.show(binalyzergers.map(
-            ({ label, type }) => ({ label, value: type }),
-            { placeholder: 'Select Environment' })
-        );
     }
 
     @inject(StorageService)

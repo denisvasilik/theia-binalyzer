@@ -16,6 +16,7 @@
 import "../../src/browser/styles/index.css";
 
 import { bindViewContribution, FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
+import { JsonSchemaContribution } from "@theia/core/lib/browser/json-schema-store";
 import { TabBarToolbarContribution } from "@theia/core/lib/browser/shell/tab-bar-toolbar";
 import { WidgetFactory } from "@theia/core/lib/browser/widget-manager";
 import { ContainerModule } from "inversify";
@@ -23,9 +24,12 @@ import { ContainerModule } from "inversify";
 import { BinalyzerPath, BinalyzerService } from "../common/binalyzer-service";
 import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
 import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
+import { bindBinalyzerPreferences } from "./binalyzer-preferences";
+import { BinalyzerSchemaUpdater } from "./binalyzer-schema-updater";
 import { BinalyzerSessionWidget, BinalyzerSessionWidgetFactory } from "./binalyzer-session-widget";
 import { BinalyzerViewService } from "./binalyzer-view-service";
 import { BinalyzerViewWidget } from "./binalyzer-view-widget";
+import { bindGlobalBinalyzerPreferences } from "./preferences/binalyzer-preferences";
 
 
 export default new ContainerModule(bind => {
@@ -38,10 +42,11 @@ export default new ContainerModule(bind => {
         createWidget: () => BinalyzerViewWidget.createWidget(container)
     })).inSingletonScope();
 
+    bind(BinalyzerSchemaUpdater).toSelf().inSingletonScope();
+    bind(JsonSchemaContribution).toService(BinalyzerSchemaUpdater);
     bind(BinalyzerConfigurationManager).toSelf().inSingletonScope();
 
     bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
-
 
     bind(BinalyzerViewService).toSelf().inSingletonScope();
     bind(WidgetFactory).toService(BinalyzerViewService);
@@ -49,4 +54,7 @@ export default new ContainerModule(bind => {
     bindViewContribution(bind, BinalyzerFrontendApplicationContribution);
     bind(FrontendApplicationContribution).toService(BinalyzerFrontendApplicationContribution);
     bind(TabBarToolbarContribution).toService(BinalyzerFrontendApplicationContribution);
+
+    bindBinalyzerPreferences(bind);
+    bindGlobalBinalyzerPreferences(bind);
 });
