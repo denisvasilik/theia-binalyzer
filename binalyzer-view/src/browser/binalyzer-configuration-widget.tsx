@@ -64,9 +64,9 @@ export class BinalyzerConfigurationWidget extends ReactWidget {
         const { options } = this;
         return <React.Fragment>
             <select className='theia-select binalyzer-configuration' value={this.currentValue} onChange={this.setCurrentConfiguration}>
-                {options.length ? options : <option value='__NO_CONF__'>No Configurations</option>}
-                <option disabled>{'Add Configuration...'.replace(/./g, '-')}</option>
-                <option value='__ADD_CONF__'>Add Configuration...</option>
+                {options.length ? options : <option value='__NO_CONF__'>No Bindings</option>}
+                <option disabled>{'Add Bindings...'.replace(/./g, '-')}</option>
+                <option value='__ADD_CONF__'>Add Bindings...</option>
             </select>
         </React.Fragment>;
     }

@@ -8,7 +8,7 @@
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
-            "name": "Client 123543535",
+            "name": "WASM Module Example",
             "url": "http://localhost:3000/",
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
@@ -21,7 +21,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Server",
+            "name": "TCP/IPv4 Example",
             "program": "${workspaceRoot}/browser-app/src-gen/backend/main.js",
             "args": [
                 "--loglevel=debug",
@@ -41,15 +41,6 @@
             "smartStep": true,
             "internalConsoleOptions": "openOnSessionStart",
             "outputCapture": "std"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Server/Client",
-            "configurations": [
-                "Server",
-                "Client"
-            ]
         }
     ]
 }
