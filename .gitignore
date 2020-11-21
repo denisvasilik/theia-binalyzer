@@ -10,6 +10,7 @@ yarn-error.log
 plugins/
 *.log
 yarn.lock
+theia-binalyzer-glsp.jar
 
 examples/browser-app/**
 !examples/browser-app/package.json
