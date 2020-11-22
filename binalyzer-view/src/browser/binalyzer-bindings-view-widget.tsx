@@ -13,26 +13,91 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { defaultTreeProps, TreeProps, TreeWidget } from "@theia/core/lib/browser";
-import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
+import { bindContributionProvider, Emitter } from "@theia/core";
+import {
+    CompositeTreeNode,
+    ContextMenuRenderer,
+    createTreeContainer,
+    defaultTreeProps,
+    ExpandableTreeNode,
+    SelectableTreeNode,
+    TreeDecoratorService,
+    TreeModel,
+    TreeModelImpl,
+    TreeNode,
+    TreeProps,
+    TreeWidget
+} from "@theia/core/lib/browser";
+import { Container, inject, injectable, interfaces } from "inversify";
+import * as React from "react";
 
-import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
+import { BindingsViewTreeModel } from "./binalyzer-bindings-view-tree";
+import { BinalyzerDecoratorService, BinalyzerTreeDecorator } from "./binalyzer-decorator-service";
 
+/**
+ * Representation of an outline symbol information node.
+ */
+export interface BinalyzerSymbolInformationNode extends CompositeTreeNode, SelectableTreeNode, ExpandableTreeNode {
+    /**
+     * The `iconClass` for the given tree node.
+     */
+    iconClass: string;
+}
+
+/**
+ * Collection of outline symbol information node functions.
+ */
+export namespace BinalyzerSymbolInformationNode {
+    /**
+     * Determine if the given tree node is an `BinalyzerSymbolInformationNode`.
+     * - The tree node is an `BinalyzerSymbolInformationNode` if:
+     *  - The node exists.
+     *  - The node is selectable.
+     *  - The node contains a defined `iconClass` property.
+     * @param node the tree node.
+     *
+     * @returns `true` if the given node is an `BinalyzerSymbolInformationNode`.
+     */
+    export function is(node: TreeNode): node is BinalyzerSymbolInformationNode {
+        return !!node && SelectableTreeNode.is(node) && 'iconClass' in node;
+    }
+}
+
+export type BinalyzerViewWidgetFactory = () => BinalyzerBindingsViewWidget;
+export const BinalyzerViewWidgetFactory = Symbol('BinalyzerViewWidgetFactory');
 
 @injectable()
 export class BinalyzerBindingsViewWidget extends TreeWidget {
 
-    @inject(TreeProps)
-    protected readonly treeProps: TreeProps;
+    readonly onDidChangeOpenStateEmitter = new Emitter<boolean>();
 
-    @inject(BinalyzerBindingsViewModel)
-    readonly viewModel: BinalyzerBindingsViewModel;
+    constructor(
+        @inject(TreeProps) protected readonly treeProps: TreeProps,
+        @inject(BindingsViewTreeModel) model: BindingsViewTreeModel,
+        @inject(ContextMenuRenderer) protected readonly contextMenuRenderer: ContextMenuRenderer
+    ) {
+        super(treeProps, model, contextMenuRenderer);
+        this.id = 'binalyzer-bindings-view';
+        this.title.label = 'Binalyzer';
+    }
 
     static createContainer(parent: interfaces.Container): Container {
-        const child = new Container({ defaultScope: 'Singleton' });
+        const child = createTreeContainer(parent);
         child.parent = parent;
+
         child.rebind(TreeProps).toConstantValue({ ...defaultTreeProps, search: true });
+
+        child.unbind(TreeWidget);
         child.bind(BinalyzerBindingsViewWidget).toSelf();
+
+        child.unbind(TreeModelImpl);
+        child.bind(BindingsViewTreeModel).toSelf();
+        child.rebind(TreeModel).toService(BindingsViewTreeModel);
+
+        child.bind(BinalyzerDecoratorService).toSelf().inSingletonScope();
+        child.rebind(TreeDecoratorService).toDynamicValue(ctx => ctx.container.get(BinalyzerDecoratorService)).inSingletonScope();
+        bindContributionProvider(child, BinalyzerTreeDecorator);
+
         return child;
     }
 
@@ -40,11 +105,10 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
         return BinalyzerBindingsViewWidget.createContainer(parent).get(BinalyzerBindingsViewWidget);
     }
 
-    @postConstruct()
-    protected init(): void {
-        super.init();
-        this.id = 'binalyzer:template:' + this.viewModel.id;
-        this.title.label = 'Bindings';
+    protected renderTree(model: TreeModel): React.ReactNode {
+        if (CompositeTreeNode.is(this.model.root) && !this.model.root.children.length) {
+            return <div className='theia-widget-noInfo no-outline'>No outline information available.</div>;
+        }
+        return super.renderTree(model);
     }
-
 }

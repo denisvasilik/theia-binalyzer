@@ -24,9 +24,9 @@ import {
 } from "@theia/core/lib/browser";
 import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
 
-import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
 import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
 import { BinalyzerSessionWidget } from "./binalyzer-session-widget";
+import { BinalyzerViewModel } from "./binalyzer-view-model";
 
 
 @injectable()
@@ -45,8 +45,8 @@ export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, A
     static ID = 'binalyzer';
     static LABEL = 'Binalyzer';
 
-    @inject(BinalyzerBindingsViewModel)
-    readonly model: BinalyzerBindingsViewModel;
+    @inject(BinalyzerViewModel)
+    readonly model: BinalyzerViewModel;
 
     @inject(BinalyzerConfigurationWidget)
     protected readonly toolbar: BinalyzerConfigurationWidget;

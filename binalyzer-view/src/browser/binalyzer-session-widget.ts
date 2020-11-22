@@ -24,10 +24,10 @@ import {
 } from "@theia/core/lib/browser";
 import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
 
-import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
 import { BinalyzerBindingsViewWidget } from "./binalyzer-bindings-view-widget";
 import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
 import { BinalyzerToolBar } from "./binalyzer-toolbar-widget";
+import { BinalyzerViewModel } from "./binalyzer-view-model";
 
 
 export const BinalyzerSessionWidgetFactory = Symbol('BinalyzerSessionWidgetFactory');
@@ -39,7 +39,7 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
     static createContainer(parent: interfaces.Container): Container {
         const child = new Container({ defaultScope: 'Singleton' });
         child.parent = parent;
-        child.bind(BinalyzerBindingsViewModel).toSelf();
+        child.bind(BinalyzerViewModel).toSelf();
         child.bind(BinalyzerToolBar).toSelf();
         child.bind(BinalyzerConfigurationWidget).toSelf();
         child.bind(BinalyzerBindingsViewWidget).toDynamicValue(({ container }) => BinalyzerBindingsViewWidget.createWidget(container));
@@ -56,8 +56,8 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
     @inject(ViewContainer.Factory)
     protected readonly viewContainerFactory: ViewContainer.Factory;
 
-    @inject(BinalyzerBindingsViewModel)
-    readonly model: BinalyzerBindingsViewModel;
+    @inject(BinalyzerViewModel)
+    readonly model: BinalyzerViewModel;
 
     @inject(BinalyzerToolBar)
     protected readonly toolbar: BinalyzerToolBar;

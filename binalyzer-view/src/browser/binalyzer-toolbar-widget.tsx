@@ -18,15 +18,15 @@ import { ReactWidget } from "@theia/core/lib/browser/widgets";
 import { inject, injectable, postConstruct } from "inversify";
 import * as React from "react";
 
-import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
+import { BinalyzerViewModel } from "./binalyzer-view-model";
 
 
 
 @injectable()
 export class BinalyzerToolBar extends ReactWidget {
 
-    @inject(BinalyzerBindingsViewModel)
-    protected readonly model: BinalyzerBindingsViewModel;
+    @inject(BinalyzerViewModel)
+    protected readonly model: BinalyzerViewModel;
 
     @postConstruct()
     protected init(): void {

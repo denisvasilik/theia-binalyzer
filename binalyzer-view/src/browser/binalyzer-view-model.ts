@@ -18,7 +18,7 @@ import { injectable, postConstruct } from "inversify";
 
 
 @injectable()
-export class BinalyzerBindingsViewModel implements Disposable {
+export class BinalyzerViewModel implements Disposable {
 
     protected readonly onDidChangeEmitter = new Emitter<void>();
     readonly onDidChange: Event<void> = this.onDidChangeEmitter.event;
