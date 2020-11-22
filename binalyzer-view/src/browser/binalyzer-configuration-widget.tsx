@@ -22,17 +22,12 @@ import * as React from "react";
 
 import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
 import { BinalyzerSessionOptions } from "./binalyzer-session-options";
-import { BinalyzerViewModel } from "./binalyzer-view-model";
-
 
 @injectable()
 export class BinalyzerConfigurationWidget extends ReactWidget {
 
     @inject(CommandRegistry)
     protected readonly commandRegistry: CommandRegistry;
-
-    @inject(BinalyzerViewModel)
-    protected readonly viewModel: BinalyzerViewModel;
 
     @inject(BinalyzerConfigurationManager)
     protected readonly manager: BinalyzerConfigurationManager;
