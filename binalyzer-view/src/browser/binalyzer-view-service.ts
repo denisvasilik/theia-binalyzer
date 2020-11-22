@@ -76,7 +76,7 @@ export class BinalyzerViewService implements WidgetFactory {
             parent: undefined,
             children: [],
             busy: 0,
-            iconClass: 'node0',
+            iconClass: '',
             selected: false,
             expanded: false
         } as BinalyzerSymbolInformationNode;
@@ -88,7 +88,7 @@ export class BinalyzerViewService implements WidgetFactory {
             parent: undefined,
             children: [],
             busy: 0,
-            iconClass: 'node0',
+            iconClass: '',
             selected: false,
             expanded: false
         } as BinalyzerSymbolInformationNode;

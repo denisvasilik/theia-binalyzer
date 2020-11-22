@@ -80,15 +80,14 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
     ) {
         super(treeProps, model, contextMenuRenderer);
         this.id = 'binalyzer-bindings-view';
-        this.title.label = 'Binalyzer Label';
-        this.title.caption = 'Binalyzer Caption';
+        this.title.label = 'Bindings ';
+        this.title.caption = 'Bindings';
         this.title.closable = true;
         this.addClass('theia-binalyzer-bindings-view');
     }
 
     static createContainer(parent: interfaces.Container): Container {
         const child = createTreeContainer(parent);
-        child.parent = parent;
 
         child.rebind(TreeProps).toConstantValue({ ...defaultTreeProps, search: true });
 
@@ -117,8 +116,8 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
     public setBinalyzerTree(roots: BinalyzerSymbolInformationNode[]): void {
         this.model.root = {
             id: 'binalyzer-bindings-view-root',
-            name: 'Binalyzer Root',
-            visible: false,
+            name: 'Binalyzer',
+            visible: true,
             children: roots,
             parent: undefined
         } as CompositeTreeNode;
