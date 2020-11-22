@@ -89,7 +89,7 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
     static createContainer(parent: interfaces.Container): Container {
         const child = createTreeContainer(parent);
 
-        child.rebind(TreeProps).toConstantValue({ ...defaultTreeProps, search: true });
+        child.rebind(TreeProps).toConstantValue({ ...defaultTreeProps, search: true, virtualized: false });
 
         child.unbind(TreeWidget);
         child.bind(BinalyzerBindingsViewWidget).toSelf();
@@ -117,7 +117,7 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
         this.model.root = {
             id: 'binalyzer-bindings-view-root',
             name: 'Binalyzer',
-            visible: true,
+            visible: false,
             children: roots,
             parent: undefined
         } as CompositeTreeNode;
