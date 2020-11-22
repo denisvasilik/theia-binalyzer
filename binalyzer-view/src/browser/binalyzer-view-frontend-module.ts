@@ -36,11 +36,6 @@ export default new ContainerModule(bind => {
         () => BinalyzerViewWidget.createWidget(container)
     ).inSingletonScope();
 
-    bind(WidgetFactory).toDynamicValue(({ container }) => ({
-        id: BinalyzerViewWidget.ID,
-        createWidget: () => BinalyzerViewWidget.createWidget(container)
-    })).inSingletonScope();
-
     bind(BinalyzerSchemaUpdater).toSelf().inSingletonScope();
     bind(JsonSchemaContribution).toService(BinalyzerSchemaUpdater);
     bind(BinalyzerConfigurationManager).toSelf().inSingletonScope();
