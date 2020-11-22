@@ -20,9 +20,9 @@ import { WorkspaceService } from "@theia/workspace/lib/browser";
 import { inject, injectable, postConstruct } from "inversify";
 import * as React from "react";
 
+import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
 import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
 import { BinalyzerSessionOptions } from "./binalyzer-session-options";
-import { BinalyzerViewModel } from "./binalyzer-view-model";
 
 
 @injectable()
@@ -31,8 +31,8 @@ export class BinalyzerConfigurationWidget extends ReactWidget {
     @inject(CommandRegistry)
     protected readonly commandRegistry: CommandRegistry;
 
-    @inject(BinalyzerViewModel)
-    protected readonly viewModel: BinalyzerViewModel;
+    @inject(BinalyzerBindingsViewModel)
+    protected readonly viewModel: BinalyzerBindingsViewModel;
 
     @inject(BinalyzerConfigurationManager)
     protected readonly manager: BinalyzerConfigurationManager;

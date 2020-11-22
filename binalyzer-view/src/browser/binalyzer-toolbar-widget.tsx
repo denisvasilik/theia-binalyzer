@@ -13,19 +13,20 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Disposable } from "@theia/core";
+import { ReactWidget } from "@theia/core/lib/browser/widgets";
+import { inject, injectable, postConstruct } from "inversify";
+import * as React from "react";
 
-import * as React from 'react';
-import { inject, postConstruct, injectable } from 'inversify';
-import { Disposable } from '@theia/core';
-import { ReactWidget } from '@theia/core/lib/browser/widgets';
-import { BinalyzerViewModel } from './binalyzer-view-model';
+import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
+
 
 
 @injectable()
 export class BinalyzerToolBar extends ReactWidget {
 
-    @inject(BinalyzerViewModel)
-    protected readonly model: BinalyzerViewModel;
+    @inject(BinalyzerBindingsViewModel)
+    protected readonly model: BinalyzerBindingsViewModel;
 
     @postConstruct()
     protected init(): void {

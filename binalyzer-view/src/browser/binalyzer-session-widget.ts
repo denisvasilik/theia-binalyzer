@@ -13,16 +13,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-
-import { inject, injectable, postConstruct, interfaces, Container } from 'inversify';
 import {
-    Message, ApplicationShell, Widget, BaseWidget, PanelLayout, StatefulWidget, ViewContainer
-} from '@theia/core/lib/browser';
-import { BinalyzerTemplateWidget } from './binalyzer-template-widget';
-import { BinalyzerDataWidget } from './binalyzer-data-widget';
-import { BinalyzerToolBar } from './binalyzer-toolbar-widget';
-import { BinalyzerViewModel } from './binalyzer-view-model';
-import { BinalyzerConfigurationWidget } from './binalyzer-configuration-widget';
+    ApplicationShell,
+    BaseWidget,
+    Message,
+    PanelLayout,
+    StatefulWidget,
+    ViewContainer,
+    Widget
+} from "@theia/core/lib/browser";
+import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
+
+import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
+import { BinalyzerBindingsViewWidget } from "./binalyzer-bindings-view-widget";
+import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
+import { BinalyzerToolBar } from "./binalyzer-toolbar-widget";
+
 
 export const BinalyzerSessionWidgetFactory = Symbol('BinalyzerSessionWidgetFactory');
 export type BinalyzerSessionWidgetFactory = () => BinalyzerSessionWidget;
@@ -33,11 +39,10 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
     static createContainer(parent: interfaces.Container): Container {
         const child = new Container({ defaultScope: 'Singleton' });
         child.parent = parent;
-        child.bind(BinalyzerViewModel).toSelf();
+        child.bind(BinalyzerBindingsViewModel).toSelf();
         child.bind(BinalyzerToolBar).toSelf();
         child.bind(BinalyzerConfigurationWidget).toSelf();
-        child.bind(BinalyzerTemplateWidget).toDynamicValue(({ container }) => BinalyzerTemplateWidget.createWidget(container));
-        child.bind(BinalyzerDataWidget).toDynamicValue(({ container }) => BinalyzerDataWidget.createWidget(container));
+        child.bind(BinalyzerBindingsViewWidget).toDynamicValue(({ container }) => BinalyzerBindingsViewWidget.createWidget(container));
         child.bind(BinalyzerSessionWidget).toSelf();
         return child;
     }
@@ -51,8 +56,8 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
     @inject(ViewContainer.Factory)
     protected readonly viewContainerFactory: ViewContainer.Factory;
 
-    @inject(BinalyzerViewModel)
-    readonly model: BinalyzerViewModel;
+    @inject(BinalyzerBindingsViewModel)
+    readonly model: BinalyzerBindingsViewModel;
 
     @inject(BinalyzerToolBar)
     protected readonly toolbar: BinalyzerToolBar;
@@ -60,11 +65,8 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
     @inject(BinalyzerConfigurationWidget)
     protected readonly configuration: BinalyzerConfigurationWidget;
 
-    @inject(BinalyzerTemplateWidget)
-    protected readonly templates: BinalyzerTemplateWidget;
-
-    @inject(BinalyzerDataWidget)
-    protected readonly data: BinalyzerDataWidget;
+    @inject(BinalyzerBindingsViewWidget)
+    protected readonly templates: BinalyzerBindingsViewWidget;
 
     @postConstruct()
     protected init(): void {
@@ -79,7 +81,6 @@ export class BinalyzerSessionWidget extends BaseWidget implements StatefulWidget
             id: 'binalyzer:view-container:' + this.model.id
         });
         this.viewContainer.addWidget(this.templates, { weight: 30 });
-        this.viewContainer.addWidget(this.data, { weight: 20 });
 
         this.toDispose.pushAll([
             this.toolbar,

@@ -13,14 +13,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-
-import { injectable, postConstruct, inject, interfaces, Container } from 'inversify';
 import {
-    BaseWidget, PanelLayout, Message, ApplicationShell, Widget, StatefulWidget, ViewContainer
-} from '@theia/core/lib/browser';
-import { BinalyzerSessionWidget } from './binalyzer-session-widget';
-import { BinalyzerConfigurationWidget } from './binalyzer-configuration-widget';
-import { BinalyzerViewModel } from './binalyzer-view-model';
+    ApplicationShell,
+    BaseWidget,
+    Message,
+    PanelLayout,
+    StatefulWidget,
+    ViewContainer,
+    Widget
+} from "@theia/core/lib/browser";
+import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
+
+import { BinalyzerBindingsViewModel } from "./binalyzer-bindings-view-model";
+import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
+import { BinalyzerSessionWidget } from "./binalyzer-session-widget";
+
 
 @injectable()
 export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, ApplicationShell.TrackableWidgetProvider {
@@ -38,8 +45,8 @@ export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, A
     static ID = 'binalyzer';
     static LABEL = 'Binalyzer';
 
-    @inject(BinalyzerViewModel)
-    readonly model: BinalyzerViewModel;
+    @inject(BinalyzerBindingsViewModel)
+    readonly model: BinalyzerBindingsViewModel;
 
     @inject(BinalyzerConfigurationWidget)
     protected readonly toolbar: BinalyzerConfigurationWidget;

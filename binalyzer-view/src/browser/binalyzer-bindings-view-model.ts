@@ -13,12 +13,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Disposable, DisposableCollection, Emitter, Event } from "@theia/core/lib/common";
+import { injectable, postConstruct } from "inversify";
 
-import { injectable, postConstruct } from 'inversify';
-import { Disposable, DisposableCollection, Event, Emitter } from '@theia/core/lib/common';
 
 @injectable()
-export class BinalyzerViewModel implements Disposable {
+export class BinalyzerBindingsViewModel implements Disposable {
 
     protected readonly onDidChangeEmitter = new Emitter<void>();
     readonly onDidChange: Event<void> = this.onDidChangeEmitter.event;
