@@ -13,28 +13,25 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import {
-    ApplicationShell,
-    BaseWidget,
-    Message,
-    PanelLayout,
-    StatefulWidget,
-    ViewContainer,
-    Widget
-} from "@theia/core/lib/browser";
+import { BaseWidget, Message, PanelLayout, ViewContainer } from "@theia/core/lib/browser";
 import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
 
+import { BinalyzerBindingsViewWidget } from "./binalyzer-bindings-view-widget";
 import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
-import { BinalyzerSessionWidget } from "./binalyzer-session-widget";
 import { BinalyzerViewModel } from "./binalyzer-view-model";
 
+export type BinalyzerViewWidgetFactory = () => BinalyzerViewWidget;
+export const BinalyzerViewWidgetFactory = Symbol('BinalyzerViewWidgetFactory');
 
 @injectable()
-export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, ApplicationShell.TrackableWidgetProvider {
+export class BinalyzerViewWidget extends BaseWidget {
 
     static createContainer(parent: interfaces.Container): Container {
-        const child = BinalyzerSessionWidget.createContainer(parent);
+        const child = new Container({ defaultScope: 'Singleton' });
+        child.parent = parent;
+        child.bind(BinalyzerViewModel).toSelf();
         child.bind(BinalyzerConfigurationWidget).toSelf();
+        child.bind(BinalyzerBindingsViewWidget).toDynamicValue(({ container }) => BinalyzerBindingsViewWidget.createWidget(container));
         child.bind(BinalyzerViewWidget).toSelf();
         return child;
     }
@@ -45,14 +42,19 @@ export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, A
     static ID = 'binalyzer';
     static LABEL = 'Binalyzer';
 
+    protected viewContainer: ViewContainer;
+
+    @inject(ViewContainer.Factory)
+    protected readonly viewContainerFactory: ViewContainer.Factory;
+
     @inject(BinalyzerViewModel)
     readonly model: BinalyzerViewModel;
 
     @inject(BinalyzerConfigurationWidget)
-    protected readonly toolbar: BinalyzerConfigurationWidget;
+    protected readonly configuration: BinalyzerConfigurationWidget;
 
-    @inject(BinalyzerSessionWidget)
-    protected readonly sessionWidget: BinalyzerSessionWidget;
+    @inject(BinalyzerBindingsViewWidget)
+    public readonly bindings: BinalyzerBindingsViewWidget;
 
     @postConstruct()
     protected init(): void {
@@ -62,31 +64,23 @@ export class BinalyzerViewWidget extends BaseWidget implements StatefulWidget, A
         this.title.closable = true;
         this.title.iconClass = 'binalyzer-tab-icon';
         this.addClass('theia-binalyzer-container');
-        this.toDispose.pushAll([
-            this.toolbar,
-            this.sessionWidget
-        ]);
 
+        this.viewContainer = this.viewContainerFactory({
+            id: 'binalyzer:view-container:' + this.model.id
+        });
+        this.viewContainer.addWidget(this.bindings, { weight: 30 });
+
+        this.toDispose.pushAll([
+            this.configuration,
+            this.viewContainer
+        ]);
         const layout = this.layout = new PanelLayout();
-        layout.addWidget(this.toolbar);
-        layout.addWidget(this.sessionWidget);
+        layout.addWidget(this.configuration);
+        layout.addWidget(this.viewContainer);
     }
 
     protected onActivateRequest(msg: Message): void {
         super.onActivateRequest(msg);
-        this.toolbar.focus();
+        this.configuration.focus();
     }
-
-    getTrackableWidgets(): Widget[] {
-        return this.sessionWidget.getTrackableWidgets();
-    }
-
-    storeState(): object {
-        return this.sessionWidget.storeState();
-    }
-
-    restoreState(oldState: ViewContainer.State): void {
-        this.sessionWidget.restoreState(oldState);
-    }
-
 }

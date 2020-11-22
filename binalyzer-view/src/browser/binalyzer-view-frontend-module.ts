@@ -26,15 +26,14 @@ import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager
 import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
 import { bindBinalyzerPreferences } from "./binalyzer-preferences";
 import { BinalyzerSchemaUpdater } from "./binalyzer-schema-updater";
-import { BinalyzerSessionWidget, BinalyzerSessionWidgetFactory } from "./binalyzer-session-widget";
 import { BinalyzerViewService } from "./binalyzer-view-service";
-import { BinalyzerViewWidget } from "./binalyzer-view-widget";
+import { BinalyzerViewWidget, BinalyzerViewWidgetFactory } from "./binalyzer-view-widget";
 import { bindGlobalBinalyzerPreferences } from "./preferences/binalyzer-preferences";
 
 
 export default new ContainerModule(bind => {
-    bind(BinalyzerSessionWidgetFactory).toDynamicValue(({ container }) =>
-        () => BinalyzerSessionWidget.createWidget(container)
+    bind(BinalyzerViewWidgetFactory).toDynamicValue(({ container }) =>
+        () => BinalyzerViewWidget.createWidget(container)
     ).inSingletonScope();
 
     bind(WidgetFactory).toDynamicValue(({ container }) => ({

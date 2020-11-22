@@ -20,6 +20,8 @@ import {
     createTreeContainer,
     defaultTreeProps,
     ExpandableTreeNode,
+    Message,
+    NodeProps,
     SelectableTreeNode,
     TreeDecoratorService,
     TreeModel,
@@ -63,8 +65,8 @@ export namespace BinalyzerSymbolInformationNode {
     }
 }
 
-export type BinalyzerViewWidgetFactory = () => BinalyzerBindingsViewWidget;
-export const BinalyzerViewWidgetFactory = Symbol('BinalyzerViewWidgetFactory');
+export type BinalyzerBindingsViewWidgetFactory = () => BinalyzerBindingsViewWidget;
+export const BinalyzerBindingsViewWidgetFactory = Symbol('BinalyzerBindingsViewWidgetFactory');
 
 @injectable()
 export class BinalyzerBindingsViewWidget extends TreeWidget {
@@ -78,7 +80,10 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
     ) {
         super(treeProps, model, contextMenuRenderer);
         this.id = 'binalyzer-bindings-view';
-        this.title.label = 'Binalyzer';
+        this.title.label = 'Binalyzer Label';
+        this.title.caption = 'Binalyzer Caption';
+        this.title.closable = true;
+        this.addClass('theia-binalyzer-bindings-view');
     }
 
     static createContainer(parent: interfaces.Container): Container {
@@ -105,9 +110,87 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
         return BinalyzerBindingsViewWidget.createContainer(parent).get(BinalyzerBindingsViewWidget);
     }
 
+    /**
+     * Set the outline tree with the list of `BinalyzerSymbolInformationNode`.
+     * @param roots the list of `BinalyzerSymbolInformationNode`.
+     */
+    public setBinalyzerTree(roots: BinalyzerSymbolInformationNode[]): void {
+        this.model.root = {
+            id: 'binalyzer-bindings-view-root',
+            name: 'Binalyzer Root',
+            visible: false,
+            children: roots,
+            parent: undefined
+        } as CompositeTreeNode;
+    }
+
+    /**
+     * Reconcile the outline tree state, gathering all available nodes.
+     * @param nodes the list of `TreeNode`.
+     *
+     * @returns the list of tree nodes.
+     */
+    protected reconcileTreeState(nodes: TreeNode[]): TreeNode[] {
+        nodes.forEach(node => {
+            if (BinalyzerSymbolInformationNode.is(node)) {
+                const treeNode = this.model.getNode(node.id);
+                if (treeNode && BinalyzerSymbolInformationNode.is(treeNode)) {
+                    treeNode.expanded = node.expanded;
+                    treeNode.selected = node.selected;
+                }
+                this.reconcileTreeState(Array.from(node.children));
+            }
+        });
+        return nodes;
+    }
+
+    protected onAfterHide(msg: Message): void {
+        super.onAfterHide(msg);
+        this.onDidChangeOpenStateEmitter.fire(false);
+    }
+
+    protected onAfterShow(msg: Message): void {
+        super.onAfterShow(msg);
+        this.onDidChangeOpenStateEmitter.fire(true);
+    }
+
+    renderIcon(node: TreeNode, props: NodeProps): React.ReactNode {
+        if (BinalyzerSymbolInformationNode.is(node)) {
+            return <div className={'symbol-icon symbol-icon-center ' + node.iconClass}></div>;
+        }
+        return undefined;
+    }
+
+    protected createNodeAttributes(node: TreeNode, props: NodeProps): React.Attributes & React.HTMLAttributes<HTMLElement> {
+        const elementAttrs = super.createNodeAttributes(node, props);
+        return {
+            ...elementAttrs,
+            title: this.getNodeTooltip(node)
+        };
+    }
+
+    /**
+     * Get the tooltip for the given tree node.
+     * - The tooltip is discovered when hovering over a tree node.
+     * - If available, the tooltip is the concatenation of the node name, and it's type.
+     * @param node the tree node.
+     *
+     * @returns the tooltip for the tree node if available, else `undefined`.
+     */
+    protected getNodeTooltip(node: TreeNode): string | undefined {
+        if (BinalyzerSymbolInformationNode.is(node)) {
+            return node.name + ` (${node.iconClass})`;
+        }
+        return undefined;
+    }
+
+    protected isExpandable(node: TreeNode): node is ExpandableTreeNode {
+        return BinalyzerSymbolInformationNode.is(node) && node.children.length > 0;
+    }
+
     protected renderTree(model: TreeModel): React.ReactNode {
         if (CompositeTreeNode.is(this.model.root) && !this.model.root.children.length) {
-            return <div className='theia-widget-noInfo no-outline'>No outline information available.</div>;
+            return <div className='theia-widget-noInfo no-outline'>No binding information available.</div>;
         }
         return super.renderTree(model);
     }
