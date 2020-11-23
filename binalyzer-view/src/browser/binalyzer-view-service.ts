@@ -69,31 +69,43 @@ export class BinalyzerViewService implements WidgetFactory {
     createWidget(): Promise<Widget> {
         this.widget = this.factory();
 
-        const firstNode = {
-            id: 'Node0',
-            name: 'Node0',
+        const data0 = {
+            id: 'data0',
+            name: 'Hello World App',
             visible: true,
             parent: undefined,
             children: [],
+            busy: 0,
+            iconClass: 'variable',
+            selected: false,
+            expanded: false
+        } as BinalyzerSymbolInformationNode;
+
+        const template0 = {
+            id: 'template0',
+            name: 'WASM Module Format v1.0',
+            visible: true,
+            parent: undefined,
+            children: [],
+            busy: 0,
+            iconClass: 'interface',
+            selected: false,
+            expanded: false
+        } as BinalyzerSymbolInformationNode;
+
+        const binding0 = {
+            id: 'binding0',
+            name: 'WASM Hello World App Binding',
+            visible: true,
+            parent: undefined,
+            children: [template0, data0],
             busy: 0,
             iconClass: '',
             selected: false,
             expanded: false
         } as BinalyzerSymbolInformationNode;
 
-        const secondNode = {
-            id: 'Node1',
-            name: 'Node1',
-            visible: true,
-            parent: undefined,
-            children: [],
-            busy: 0,
-            iconClass: '',
-            selected: false,
-            expanded: false
-        } as BinalyzerSymbolInformationNode;
-
-        this.publish([firstNode, secondNode]);
+        this.publish([binding0]);
 
         const disposables = new DisposableCollection();
         disposables.push(this.widget.bindings.onDidChangeOpenStateEmitter.event(open => this.onDidChangeOpenStateEmitter.fire(open)));

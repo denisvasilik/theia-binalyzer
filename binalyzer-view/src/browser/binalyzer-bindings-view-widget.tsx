@@ -154,7 +154,7 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
     }
 
     renderIcon(node: TreeNode, props: NodeProps): React.ReactNode {
-        if (BinalyzerSymbolInformationNode.is(node)) {
+        if (BinalyzerSymbolInformationNode.is(node) && node.iconClass.length) {
             return <div className={'symbol-icon symbol-icon-center ' + node.iconClass}></div>;
         }
         return undefined;
