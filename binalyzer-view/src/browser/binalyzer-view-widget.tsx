@@ -45,9 +45,6 @@ export class BinalyzerViewWidget extends BaseWidget {
     @inject(ViewContainer.Factory)
     protected readonly viewContainerFactory: ViewContainer.Factory;
 
-    @inject(BinalyzerConfigurationWidget)
-    protected readonly configuration: BinalyzerConfigurationWidget;
-
     @inject(BinalyzerBindingsViewWidget)
     public readonly bindings: BinalyzerBindingsViewWidget;
 
@@ -66,16 +63,13 @@ export class BinalyzerViewWidget extends BaseWidget {
         this.viewContainer.addWidget(this.bindings, { weight: 30 });
 
         this.toDispose.pushAll([
-            this.configuration,
             this.viewContainer
         ]);
         const layout = this.layout = new PanelLayout();
-        layout.addWidget(this.configuration);
         layout.addWidget(this.viewContainer);
     }
 
     protected onActivateRequest(msg: Message): void {
         super.onActivateRequest(msg);
-        this.configuration.focus();
     }
 }
