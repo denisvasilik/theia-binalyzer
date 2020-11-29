@@ -15,6 +15,18 @@
                 {
                     "url": "webpack:///binalyzer-view",
                     "path": "${workspaceFolder}/binalyzer-view"
+                },
+                {
+                    "url": "webpack:///theia-integration",
+                    "path": "${workspaceFolder}/theia-integration"
+                },
+                {
+                    "url": "webpack:///node_modules",
+                    "path": "${workspaceFolder}/node_modules"
+                },
+                {
+                    "url": "webpack:///workflow-theia",
+                    "path": "${workspaceFolder}/workflow-theia"
                 }
             ]
         },
@@ -36,7 +48,9 @@
                 "${workspaceRoot}/node_modules/@theia/*/lib/**/*.js",
                 "${workspaceRoot}/browser-app/lib/**/*.js",
                 "${workspaceRoot}/browser-app/src-gen/**/*.js",
-                "${workspaceRoot}/binalyzer-view/lib/browser/*.js"
+                "${workspaceRoot}/binalyzer-view/lib/browser/*.js",
+                "${workspaceRoot}/workflow-theia/lib/**/*.js",
+                "${workspaceRoot}/theia-integration/lib/**/*.js",
             ],
             "smartStep": true,
             "internalConsoleOptions": "openOnSessionStart",

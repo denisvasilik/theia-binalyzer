@@ -13,14 +13,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { bindContributionProvider } from "@theia/core";
+import { bindContributionProvider, CommandContribution } from "@theia/core";
 import { FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
 import { NotificationManager } from "@theia/messages/lib/browser/notifications-manager";
 import { ContainerModule } from "inversify";
 import { TheiaContextMenuService } from "sprotty-theia/lib/sprotty/theia-sprotty-context-menu-service";
 
 import { GLSPClientContribution, GLSPClientProvider, GLSPClientProviderImpl } from ".";
-import { GLSPContribution } from "../common";
+import { BLSPContribution, GLSPContribution } from "../common";
+import { BinalyzerCommandContribution, BLSPClientContribution } from "./blsp-client-contribution";
 import { GLSPDiagramContextKeyService } from "./diagram/glsp-diagram-context-key-service";
 import { GLSPNotificationManager } from "./diagram/glsp-notification-manager";
 import { TheiaContextMenuServiceFactory } from "./diagram/glsp-theia-context-menu-service";
@@ -31,6 +32,20 @@ import { TheiaNavigateToTargetHandler } from "./theia-navigate-to-target-handler
 import { TheiaOpenerOptionsNavigationService } from "./theia-opener-options-navigation-service";
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
+    //
+    // BSLP
+    //
+    bind(BLSPContribution.Service).toDynamicValue(({ container }) =>
+        WebSocketConnectionProvider.createProxy(container, BLSPContribution.servicePath)
+    ).inSingletonScope();
+
+    bindContributionProvider(bind, BLSPClientContribution);
+
+    bind(CommandContribution).to(BinalyzerCommandContribution);
+
+    //
+    // GLSP
+    //
 
     bind(GLSPContribution.Service).toDynamicValue(({ container }) =>
         WebSocketConnectionProvider.createProxy(container, GLSPContribution.servicePath)

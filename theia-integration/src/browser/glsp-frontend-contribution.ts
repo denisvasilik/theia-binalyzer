@@ -17,6 +17,7 @@ import { ContributionProvider } from "@theia/core";
 import { FrontendApplication, FrontendApplicationContribution } from "@theia/core/lib/browser";
 import { inject, injectable, named } from "inversify";
 
+import { BLSPClientContribution } from "./blsp-client-contribution";
 import { GLSPClientContribution } from "./glsp-client-contribution";
 
 @injectable()
@@ -26,17 +27,27 @@ export class GLSPFrontendContribution implements FrontendApplicationContribution
 
     constructor(
         @inject(ContributionProvider) @named(GLSPClientContribution)
-        protected readonly contributions: ContributionProvider<GLSPClientContribution>
+        protected readonly contributions: ContributionProvider<GLSPClientContribution>,
+        @inject(ContributionProvider) @named(BLSPClientContribution)
+        protected readonly BLSPcontributions: ContributionProvider<BLSPClientContribution>
     ) { }
 
     onStart(app: FrontendApplication): void {
         for (const contribution of this.contributions.getContributions()) {
             contribution.activate(app);
         }
+
+        for (const contribution of this.BLSPcontributions.getContributions()) {
+            contribution.activate(app);
+        }
     }
 
     onStop(app: FrontendApplication): void {
         for (const contribution of this.contributions.getContributions()) {
+            contribution.deactivate(app);
+        }
+
+        for (const contribution of this.BLSPcontributions.getContributions()) {
             contribution.deactivate(app);
         }
     }

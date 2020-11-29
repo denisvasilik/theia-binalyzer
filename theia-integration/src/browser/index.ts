@@ -25,3 +25,5 @@ export * from './theia-navigate-to-marker-contribution';
 export * from './theia-navigate-to-target-handler';
 export * from './theia-opener-options-navigation-service';
 
+export * from './blsp-client-contribution';
+
