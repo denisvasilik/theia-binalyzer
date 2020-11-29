@@ -22,7 +22,6 @@ import { WidgetFactory } from "@theia/core/lib/browser/widget-manager";
 import { ContainerModule } from "inversify";
 
 import { BinalyzerPath, BinalyzerService } from "../common/binalyzer-service";
-import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
 import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
 import { bindBinalyzerPreferences } from "./binalyzer-preferences";
 import { BinalyzerSchemaUpdater } from "./binalyzer-schema-updater";
@@ -38,7 +37,6 @@ export default new ContainerModule(bind => {
 
     bind(BinalyzerSchemaUpdater).toSelf().inSingletonScope();
     bind(JsonSchemaContribution).toService(BinalyzerSchemaUpdater);
-    bind(BinalyzerConfigurationManager).toSelf().inSingletonScope();
 
     bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
 
