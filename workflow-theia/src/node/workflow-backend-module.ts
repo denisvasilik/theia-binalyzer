@@ -20,5 +20,4 @@ import { WorkflowGLServerContribution } from "./workflow-glsp-server-contributio
 
 export default new ContainerModule(bind => {
     bind(GLSPServerContribution).to(WorkflowGLServerContribution).inSingletonScope();
-    // bind(BLSPServerContribution).to(WorkflowBLServerContribution).inSingletonScope();
 });

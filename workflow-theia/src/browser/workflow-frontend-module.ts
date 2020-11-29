@@ -45,15 +45,6 @@ import { ExampleNavigationCommandContribution } from "./external-navigation-exam
 import { WorkflowGLSPClientContribution } from "./language/workflow-glsp-client-contribution";
 
 export default new ContainerModule((bind: interfaces.Bind) => {
-    //
-    // BLSP
-    //
-    // bind(WorkflowBLSPClientContribution).toSelf().inSingletonScope();
-    // bind(BLSPClientContribution).toService(WorkflowBLSPClientContribution);
-
-    //
-    // GLSP
-    //
     bind(WorkflowGLSPClientContribution).toSelf().inSingletonScope();
     bind(GLSPClientContribution).toService(WorkflowGLSPClientContribution);
     bind(DiagramConfiguration).to(WorkflowDiagramConfiguration).inSingletonScope();

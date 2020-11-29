@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { BaseBLSPClientContribution, BaseGLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
+import { BaseGLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
 import { injectable } from "inversify";
 
 import { WorkflowLanguage } from "../../common/workflow-language";
@@ -36,18 +36,3 @@ export class WorkflowGLSPClientContribution extends BaseGLSPClientContribution {
         };
     }
 }
-
-@injectable()
-export class WorkflowBLSPClientContribution extends BaseBLSPClientContribution {
-    readonly id = WorkflowLanguage.Id;
-    readonly name = WorkflowLanguage.Name;
-    readonly fileExtensions = [WorkflowLanguage.FileExtension];
-
-    protected createInitializeOptions(): WorkflowInitializeOptions {
-        return {
-            timestamp: new Date(),
-            message: "Custom Options Available"
-        };
-    }
-}
-
