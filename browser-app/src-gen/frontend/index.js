@@ -79,7 +79,7 @@ module.exports = Promise.resolve()
     .then(function () { return import('sprotty-theia/lib/theia/diagram-module').then(load) })
     .then(function () { return import('@eclipse-glsp/theia-integration/lib/browser/glsp-frontend-module').then(load) })
     .then(function () { return import('@eclipse-glsp-examples/workflow-theia/lib/browser/workflow-frontend-module').then(load) })
-    .then(function () { return import('binalyzer-view/lib/browser/binalyzer-view-frontend-module').then(load) })
+    .then(function () { return import('binalyzer-view/lib/browser/binalyzer-frontend-module').then(load) })
     .then(start).catch(reason => {
         console.error('Failed to start the frontend application.');
         if (reason) {

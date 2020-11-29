@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2019-2020 EclipseSource and others.
+ * Copyright (c) 2019 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,12 +13,25 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPServerContribution } from "@eclipse-glsp/theia-integration/lib/node";
-import { ContainerModule } from "inversify";
+import { BaseBLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
+import { injectable } from "inversify";
 
-import { WorkflowGLServerContribution } from "./workflow-glsp-server-contribution";
+export interface BinalyzerInitializeOptions {
+    timestamp: Date,
+    message: string
+}
 
-export default new ContainerModule(bind => {
-    bind(GLSPServerContribution).to(WorkflowGLServerContribution).inSingletonScope();
-    // bind(BLSPServerContribution).to(WorkflowBLServerContribution).inSingletonScope();
-});
+@injectable()
+export class BinalyzerBLSPClientContribution extends BaseBLSPClientContribution {
+    readonly id = "Workflow";
+    readonly name = "Workflow";
+    readonly fileExtensions = [".wf"];
+
+    protected createInitializeOptions(): BinalyzerInitializeOptions {
+        return {
+            timestamp: new Date(),
+            message: "Custom Options Available"
+        };
+    }
+}
+

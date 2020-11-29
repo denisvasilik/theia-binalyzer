@@ -14,7 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import {
-    BLSPClientContribution,
     GLSPClientContribution,
     registerCopyPasteContextMenu,
     registerDiagramLayoutCommands,
@@ -43,17 +42,14 @@ import {
     WorkflowTaskEditMenuContribution
 } from "./diagram/workflow-task-editing-context-menu";
 import { ExampleNavigationCommandContribution } from "./external-navigation-example/external-navigation-example";
-import {
-    WorkflowBLSPClientContribution,
-    WorkflowGLSPClientContribution
-} from "./language/workflow-glsp-client-contribution";
+import { WorkflowGLSPClientContribution } from "./language/workflow-glsp-client-contribution";
 
 export default new ContainerModule((bind: interfaces.Bind) => {
     //
     // BLSP
     //
-    bind(WorkflowBLSPClientContribution).toSelf().inSingletonScope();
-    bind(BLSPClientContribution).toService(WorkflowBLSPClientContribution);
+    // bind(WorkflowBLSPClientContribution).toSelf().inSingletonScope();
+    // bind(BLSPClientContribution).toService(WorkflowBLSPClientContribution);
 
     //
     // GLSP

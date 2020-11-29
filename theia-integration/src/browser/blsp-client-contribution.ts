@@ -36,8 +36,7 @@ import {
 import { FrontendApplication, WebSocketConnectionProvider } from "@theia/core/lib/browser";
 import { Deferred } from "@theia/core/lib/common/promise-util";
 import { WorkspaceService } from "@theia/workspace/lib/browser";
-import { inject, injectable, multiInject } from "inversify";
-import { DiagramManagerProvider } from "sprotty-theia";
+import { inject, injectable } from "inversify";
 import { MessageConnection } from "vscode-jsonrpc";
 
 import { BLSPContribution } from "../common";
@@ -93,7 +92,6 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
     @inject(WorkspaceService) protected readonly workspaceService: WorkspaceService;
     @inject(MessageService) protected readonly messageService: MessageService;
     @inject(WebSocketConnectionProvider) protected readonly connectionProvider: WebSocketConnectionProvider;
-    @multiInject(DiagramManagerProvider) protected diagramManagerProviders: DiagramManagerProvider[];
 
     constructor() {
         this.waitForReady();
@@ -109,34 +107,7 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
         if (workspaceContains.length !== 0) {
             activationPromises.push(this.waitForItemInWorkspace());
         }
-        activationPromises.push(this.waitForOpenDiagrams());
-        if (activationPromises.length !== 0) {
-            return Promise.all([
-                this.ready,
-                Promise.race(activationPromises.map(p => new Promise(async resolve => {
-                    try {
-                        await p;
-                        resolve();
-                    } catch (e) {
-                        console.error(e);
-                    }
-                })))
-            ]);
-        }
         return this.ready;
-    }
-
-    protected waitForOpenDiagrams(): Promise<any> {
-        return Promise.race(this.diagramManagerProviders.map(diagramManagerProvider => {
-            return diagramManagerProvider().then(diagramManager => {
-                return new Promise<void>((resolve) => {
-                    const disposable = diagramManager.onCreated((widget) => {
-                        disposable.dispose();
-                        resolve();
-                    });
-                });
-            });
-        }));
     }
 
     activate(): Disposable {

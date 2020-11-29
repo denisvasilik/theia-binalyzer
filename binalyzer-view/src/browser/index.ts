@@ -15,4 +15,4 @@
  ********************************************************************************/
 
 export * from './binalyzer-view-widget';
-export * from './binalyzer-view-frontend-module';
+export * from './binalyzer-frontend-module';
