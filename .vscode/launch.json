@@ -17,6 +17,10 @@
                     "path": "${workspaceFolder}/binalyzer-view"
                 },
                 {
+                    "url": "webpack:///binalyzer-protocol",
+                    "path": "${workspaceFolder}/binalyzer-protocol"
+                },
+                {
                     "url": "webpack:///theia-integration",
                     "path": "${workspaceFolder}/theia-integration"
                 },

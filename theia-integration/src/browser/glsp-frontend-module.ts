@@ -13,8 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { BinalyzerViewService } from "@binalyzer/binalyzer-view/lib/browser";
 import { bindContributionProvider, CommandContribution } from "@theia/core";
-import { FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
+import { FrontendApplicationContribution, WebSocketConnectionProvider, WidgetFactory } from "@theia/core/lib/browser";
 import { NotificationManager } from "@theia/messages/lib/browser/notifications-manager";
 import { ContainerModule } from "inversify";
 import { TheiaContextMenuService } from "sprotty-theia/lib/sprotty/theia-sprotty-context-menu-service";
@@ -40,6 +41,9 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
     ).inSingletonScope();
 
     bindContributionProvider(bind, BLSPClientContribution);
+
+    // bind(BinalyzerViewService).toSelf().inSingletonScope();
+    bind(WidgetFactory).toService(BinalyzerViewService);
 
     bind(CommandContribution).to(BinalyzerCommandContribution);
 

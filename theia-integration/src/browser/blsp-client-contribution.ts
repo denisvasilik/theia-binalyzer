@@ -18,13 +18,14 @@ import "../../css/diagram.css";
 import "../../css/theia-dialogs.css";
 import "../../css/tool-palette.css";
 
+import { BinalyzerSymbolInformationNode, BinalyzerViewService } from "@binalyzer/binalyzer-view/lib/browser";
 import {
     ApplicationIdProvider,
+    BLSPClient,
     ClientState,
     ConnectionProvider,
-    GLSPClient,
     InitializeParameters
-} from "@eclipse-glsp/protocol";
+} from "@eclipse-blsp/protocol";
 import {
     CommandContribution,
     CommandRegistry,
@@ -47,6 +48,7 @@ export const BLSPClientContribution = Symbol.for('BLSPClientContribution');
 @injectable()
 export class BinalyzerCommandContribution implements CommandContribution {
     @inject(MessageService) protected readonly messageService: MessageService;
+    @inject(BinalyzerViewService) protected readonly viewService: BinalyzerViewService;
     @inject(BLSPClientContribution) readonly blspClientContribution: BLSPClientContribution;
     registerCommands(commands: CommandRegistry): void {
         commands.registerCommand(
@@ -57,6 +59,44 @@ export class BinalyzerCommandContribution implements CommandContribution {
             {
                 execute: (args) => {
                     this.blspClientContribution.bslpClient.then(client => {
+                        const data0 = {
+                            id: 'data0',
+                            name: 'Hello World App',
+                            visible: true,
+                            parent: undefined,
+                            children: [],
+                            busy: 0,
+                            iconClass: 'variable',
+                            selected: false,
+                            expanded: false
+                        } as BinalyzerSymbolInformationNode;
+
+                        const template0 = {
+                            id: 'template0',
+                            name: 'WASM Module Format v1.0',
+                            visible: true,
+                            parent: undefined,
+                            children: [],
+                            busy: 0,
+                            iconClass: 'interface',
+                            selected: false,
+                            expanded: false
+                        } as BinalyzerSymbolInformationNode;
+
+                        const binding0 = {
+                            id: 'binding0',
+                            name: 'WASM Hello World App Binding',
+                            visible: true,
+                            parent: undefined,
+                            children: [template0, data0],
+                            busy: 0,
+                            iconClass: '',
+                            selected: false,
+                            expanded: false
+                        } as BinalyzerSymbolInformationNode;
+
+                        this.viewService.publish([binding0]);
+
                         client.sendActionMessage({
                             clientId: "test",
                             action: { kind: "test" }
@@ -70,7 +110,7 @@ export class BinalyzerCommandContribution implements CommandContribution {
 
 export interface BLSPClientContribution extends BLSPContribution {
     readonly running: boolean;
-    readonly bslpClient: Promise<GLSPClient>;
+    readonly bslpClient: Promise<BLSPClient>;
     waitForActivation(app: FrontendApplication): Promise<void>;
     activate(app: FrontendApplication): Disposable;
     deactivate(app: FrontendApplication): void;
@@ -82,10 +122,10 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
     abstract readonly name: string;
     abstract readonly fileExtensions: string[];
 
-    protected _bslpClient: GLSPClient | undefined;
+    protected _bslpClient: BLSPClient | undefined;
 
-    protected resolveReady: (bslpClient: GLSPClient) => void;
-    protected ready: Promise<GLSPClient>;
+    protected resolveReady: (bslpClient: BLSPClient) => void;
+    protected ready: Promise<BLSPClient>;
     protected deferredConnection = new Deferred<MessageConnection>();
     protected readonly toDeactivate = new DisposableCollection();
 
@@ -97,7 +137,7 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
         this.waitForReady();
     }
 
-    get bslpClient(): Promise<GLSPClient> {
+    get bslpClient(): Promise<BLSPClient> {
         return this._bslpClient ? Promise.resolve(this._bslpClient) : this.ready;
     }
 
@@ -150,6 +190,8 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
                                 this.initialize();
                             }
                         });
+                } else {
+
                 }
             })
         );
@@ -189,24 +231,24 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
             && this._bslpClient.currentState() === ClientState.Running;
     }
 
-    protected async onWillStart(languageClient: GLSPClient): Promise<void> {
+    protected async onWillStart(languageClient: BLSPClient): Promise<void> {
         await languageClient.start();
         this.onReady(languageClient);
     }
 
-    protected onReady(languageClient: GLSPClient): void {
+    protected onReady(languageClient: BLSPClient): void {
         this._bslpClient = languageClient;
         this.resolveReady(this._bslpClient);
         this.waitForReady();
     }
 
     protected waitForReady(): void {
-        this.ready = new Promise<GLSPClient>(resolve =>
+        this.ready = new Promise<BLSPClient>(resolve =>
             this.resolveReady = resolve
         );
     }
 
-    protected createBLSPCLient(connectionProvider: ConnectionProvider): GLSPClient {
+    protected createBLSPCLient(connectionProvider: ConnectionProvider): BLSPClient {
         return new TheiaJsonrpcBLSPClient({
             name: this.name,
             id: this.id,

@@ -13,14 +13,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { BaseJsonrpcGLSPClient, ClientState, JsonrpcGLSPClient } from "@eclipse-glsp/protocol";
+import { BaseJsonrpcBLSPClient, ClientState, JsonrpcBLSPClient } from "@eclipse-blsp/protocol";
 import { MessageService } from "@theia/core/";
 import { Message } from "vscode-jsonrpc";
 
 
-export class TheiaJsonrpcBLSPClient extends BaseJsonrpcGLSPClient {
+export class TheiaJsonrpcBLSPClient extends BaseJsonrpcBLSPClient {
 
-    constructor(options: JsonrpcGLSPClient.Options, protected readonly messageService: MessageService) {
+    constructor(options: JsonrpcBLSPClient.Options, protected readonly messageService: MessageService) {
         super(options);
     }
 
