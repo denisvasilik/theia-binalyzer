@@ -16,7 +16,7 @@
 import { ActionMessage } from "sprotty";
 import { Message, MessageConnection } from "vscode-ws-jsonrpc";
 
-import { ActionMessageHandler, BLSPClient, ClientState, InitializeParameters } from "../blsp-client";
+import { ActionMessageHandler, BindingParameters, BLSPClient, ClientState, InitializeParameters } from "../blsp-client";
 import { ConnectionProvider, JsonrpcBLSPClient } from "./blsp-jsonrpc-client";
 
 export class BaseJsonrpcBLSPClient implements BLSPClient {
@@ -40,11 +40,18 @@ export class BaseJsonrpcBLSPClient implements BLSPClient {
         }
     }
 
-    initializeServer(params: InitializeParameters): Promise<Boolean> {
+    initializeServer(params: InitializeParameters): Promise<String> {
         if (this.checkConnectionState()) {
             return this.resolvedConnection!.sendRequest(JsonrpcBLSPClient.InitializeRequest, params);
         }
-        return Promise.resolve(false);
+        return Promise.resolve("false");
+    }
+
+    sendBindingMessage(params: BindingParameters): Promise<String> {
+        if (this.checkConnectionState()) {
+            return this.resolvedConnection!.sendRequest(JsonrpcBLSPClient.BindingRequest, params);
+        }
+        return Promise.resolve("false");
     }
 
     onActionMessage(handler: ActionMessageHandler): void {

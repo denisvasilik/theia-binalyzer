@@ -24,7 +24,7 @@ import {
     WebSocketMessageWriter
 } from "vscode-ws-jsonrpc";
 
-import { BLSPClient, InitializeParameters } from "../blsp-client";
+import { BindingParameters, BLSPClient, InitializeParameters } from "../blsp-client";
 
 
 export type MaybePromise<T> = T | Promise<T> | PromiseLike<T>;
@@ -39,8 +39,9 @@ export namespace JsonrpcBLSPClient {
         return BLSPClient.isOptions(object) && "connectionProvider" in object;
     }
 
+    export const BindingRequest = new RequestType<BindingParameters, String, void, void>('binding');
     export const ActionMessageNotification = new NotificationType<ActionMessage, void>('process');
-    export const InitializeRequest = new RequestType<InitializeParameters, Boolean, void, void>('initialize');
+    export const InitializeRequest = new RequestType<InitializeParameters, String, void, void>('initialize');
     export const ShutdownNotification = new NotificationType0<void>('shutdown');
     export const ClientNotReadyMsg = 'JsonrpcBLSPClient is not ready yet';
 

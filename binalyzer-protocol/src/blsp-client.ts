@@ -16,6 +16,11 @@
 import { ActionMessage } from "sprotty";
 import * as uuid from "uuid";
 
+export interface BindingParameters<> {
+    template: string
+    data: string
+}
+
 export interface InitializeParameters<> {
     /**
     * Unique identifier for the current client application
@@ -59,7 +64,10 @@ export interface BLSPClient {
      * @param params Initialize parameter
      * @returns true if the initialization was successfull
      */
-    initializeServer(params: InitializeParameters): Promise<Boolean>;
+    initializeServer(params: InitializeParameters): Promise<String>;
+
+    sendBindingMessage(params: BindingParameters): Promise<String>;
+
     /**
      * Send a shutdown notification to the server
      */
