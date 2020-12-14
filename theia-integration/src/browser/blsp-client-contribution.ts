@@ -36,6 +36,8 @@ import {
 } from "@theia/core";
 import { FrontendApplication, WebSocketConnectionProvider } from "@theia/core/lib/browser";
 import { Deferred } from "@theia/core/lib/common/promise-util";
+import URI from "@theia/core/lib/common/uri";
+import { FileSystem } from "@theia/filesystem/lib/common";
 import { WorkspaceService } from "@theia/workspace/lib/browser";
 import { inject, injectable } from "inversify";
 import { MessageConnection } from "vscode-jsonrpc";
@@ -47,6 +49,8 @@ export const BLSPClientContribution = Symbol.for('BLSPClientContribution');
 
 @injectable()
 export class BinalyzerCommandContribution implements CommandContribution {
+    @inject(FileSystem) protected readonly fileSystem: FileSystem;
+    @inject(WorkspaceService) protected readonly workspaceService: WorkspaceService;
     @inject(MessageService) protected readonly messageService: MessageService;
     @inject(BinalyzerViewService) protected readonly viewService: BinalyzerViewService;
     @inject(BLSPClientContribution) readonly blspClientContribution: BLSPClientContribution;
@@ -59,48 +63,52 @@ export class BinalyzerCommandContribution implements CommandContribution {
             {
                 execute: (args) => {
                     this.blspClientContribution.bslpClient.then(client => {
-                        const data0 = {
-                            id: 'data0',
-                            name: 'Hello World App',
-                            visible: true,
-                            parent: undefined,
-                            children: [],
-                            busy: 0,
-                            iconClass: 'variable',
-                            selected: false,
-                            expanded: false
-                        } as BinalyzerSymbolInformationNode;
+                        if (this.workspaceService.workspace) {
+                            const uri = new URI(this.workspaceService.workspace.uri + '/binalyzer.json');
+                            this.fileSystem.resolveContent(uri.toString()).then(file => {
+                                const obj = JSON.parse(file.content);
+                                const data_filepath = obj.data;
+                                const template_filepath = obj.template;
+                                client.sendBindingMessage({
+                                    template: template_filepath,
+                                    data: data_filepath
+                                }).then((binding: any) => {
+                                    const binding_root = JSON.parse(binding) as BinalyzerSymbolInformationNode;
+                                    const diagram = {
+                                        id: 'diagram',
+                                        name: 'Diagram',
+                                        visible: true,
+                                        parent: undefined,
+                                        children: [],
+                                        busy: 0,
+                                        iconClass: '',
+                                        selected: false,
+                                        expanded: false,
+                                    } as BinalyzerSymbolInformationNode;
 
-                        const template0 = {
-                            id: 'template0',
-                            name: 'WASM Module Format v1.0',
-                            visible: true,
-                            parent: undefined,
-                            children: [],
-                            busy: 0,
-                            iconClass: 'interface',
-                            selected: false,
-                            expanded: false
-                        } as BinalyzerSymbolInformationNode;
+                                    const root_children = [];
+                                    root_children.push(diagram);
 
-                        const binding0 = {
-                            id: 'binding0',
-                            name: 'WASM Hello World App Binding',
-                            visible: true,
-                            parent: undefined,
-                            children: [template0, data0],
-                            busy: 0,
-                            iconClass: '',
-                            selected: false,
-                            expanded: false
-                        } as BinalyzerSymbolInformationNode;
+                                    for (let i = 0; i < binding_root.children.length; i++) {
+                                        root_children.push(binding_root.children[i]);
+                                    }
 
-                        this.viewService.publish([binding0]);
+                                    const root = {
+                                        id: binding_root.id,
+                                        name: binding_root.name,
+                                        visible: true,
+                                        parent: undefined,
+                                        children: root_children,
+                                        busy: 0,
+                                        iconClass: '',
+                                        selected: false,
+                                        expanded: false
+                                    } as BinalyzerSymbolInformationNode;
 
-                        client.sendActionMessage({
-                            clientId: "test",
-                            action: { kind: "test" }
-                        });
+                                    this.viewService.publish([root]);
+                                });
+                            });
+                        }
                     });
                 }
             }
