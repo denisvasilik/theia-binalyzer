@@ -42,7 +42,6 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
     bindContributionProvider(bind, BLSPClientContribution);
 
-    // bind(BinalyzerViewService).toSelf().inSingletonScope();
     bind(WidgetFactory).toService(BinalyzerViewService);
 
     bind(CommandContribution).to(BinalyzerCommandContribution);
