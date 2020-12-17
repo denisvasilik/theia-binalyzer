@@ -15,13 +15,15 @@
  ********************************************************************************/
 import { Widget } from "@phosphor/widgets";
 import { DisposableCollection, Emitter, Event } from "@theia/core";
-import { OpenerService, WidgetFactory } from "@theia/core/lib/browser";
+import { WidgetFactory } from "@theia/core/lib/browser";
+import { OpenerService } from "@theia/core/lib/browser/opener-service";
 import URI from "@theia/core/lib/common/uri";
+import { FileSystem } from "@theia/filesystem/lib/common";
+import { WorkspaceService } from "@theia/workspace/lib/browser";
 import { inject, injectable } from "inversify";
 
 import { BinalyzerSymbolInformationNode } from "./binalyzer-bindings-view-widget";
 import { BinalyzerViewWidget, BinalyzerViewWidgetFactory } from "./binalyzer-view-widget";
-
 
 @injectable()
 export class BinalyzerViewService implements WidgetFactory {
@@ -29,6 +31,8 @@ export class BinalyzerViewService implements WidgetFactory {
     id = 'binalyzer-view';
 
     @inject(OpenerService) protected readonly openerService: OpenerService;
+    @inject(FileSystem) protected readonly fileSystem: FileSystem;
+    @inject(WorkspaceService) protected readonly workspaceService: WorkspaceService;
 
     protected widget?: BinalyzerViewWidget;
     protected readonly onDidChangeOpenStateEmitter = new Emitter<boolean>();
@@ -88,11 +92,24 @@ export class BinalyzerViewService implements WidgetFactory {
 
         this.onDidSelect(selection => {
             console.log(selection.name);
+            if (this.workspaceService.workspace) {
+                const uri = new URI(this.workspaceService.workspace.uri + '/binalyzer.json');
+                this.fileSystem.resolveContent(uri.toString()).then(file => {
+                    const obj = JSON.parse(file.content);
+                    const template_filepath = obj.template;
+                    const uri = new URI(template_filepath);
 
-            if (selection.name == 'Diagram') {
-                const uri = new URI(selection.description);
-                this.openerService.getOpener(uri).then(opener => {
-                    opener.open(uri);
+                    if (selection.name == 'Diagram') {
+                        this.openerService.getOpener(uri).then(opener => {
+                            opener.open(uri);
+                        });
+                    } else {
+                        this.openerService.getOpener(uri).then(opener => {
+                            opener.open(uri, {
+                                selection: { name: selection.id }
+                            });
+                        });
+                    }
                 });
             }
         });
