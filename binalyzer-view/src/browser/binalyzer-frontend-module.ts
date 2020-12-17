@@ -15,6 +15,7 @@
  ********************************************************************************/
 import "../../src/browser/styles/index.css";
 
+import { BLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
 import { bindViewContribution, FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
 import { JsonSchemaContribution } from "@theia/core/lib/browser/json-schema-store";
 import { TabBarToolbarContribution } from "@theia/core/lib/browser/shell/tab-bar-toolbar";
@@ -22,14 +23,13 @@ import { WidgetFactory } from "@theia/core/lib/browser/widget-manager";
 import { ContainerModule } from "inversify";
 
 import { BinalyzerPath, BinalyzerService } from "../common/binalyzer-service";
-import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
+import { BinalyzerBLSPClientContribution } from "./binalyzer-blsp-client-contribution";
 import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
 import { bindBinalyzerPreferences } from "./binalyzer-preferences";
 import { BinalyzerSchemaUpdater } from "./binalyzer-schema-updater";
 import { BinalyzerViewService } from "./binalyzer-view-service";
 import { BinalyzerViewWidget, BinalyzerViewWidgetFactory } from "./binalyzer-view-widget";
 import { bindGlobalBinalyzerPreferences } from "./preferences/binalyzer-preferences";
-
 
 export default new ContainerModule(bind => {
     bind(BinalyzerViewWidgetFactory).toDynamicValue(({ container }) =>
@@ -38,7 +38,6 @@ export default new ContainerModule(bind => {
 
     bind(BinalyzerSchemaUpdater).toSelf().inSingletonScope();
     bind(JsonSchemaContribution).toService(BinalyzerSchemaUpdater);
-    bind(BinalyzerConfigurationManager).toSelf().inSingletonScope();
 
     bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
 
@@ -51,4 +50,7 @@ export default new ContainerModule(bind => {
 
     bindBinalyzerPreferences(bind);
     bindGlobalBinalyzerPreferences(bind);
+
+    bind(BinalyzerBLSPClientContribution).toSelf().inSingletonScope();
+    bind(BLSPClientContribution).toService(BinalyzerBLSPClientContribution);
 });

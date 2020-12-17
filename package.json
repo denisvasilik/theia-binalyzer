@@ -78,7 +78,8 @@
     "theia-integration",
     "workflow-sprotty",
     "workflow-theia",
-    "binalyzer-view"
+    "binalyzer-view",
+    "binalyzer-protocol"
   ],
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {

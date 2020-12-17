@@ -42,7 +42,7 @@
     "@theia/vsx-registry": "1.4.0",
     "@theia/workspace": "1.4.0",
     "@eclipse-glsp-examples/workflow-theia": "0.7.1",
-    "binalyzer-view": "0.0.0"
+    "@binalyzer/binalyzer-view": "0.0.0"
   },
   "devDependencies": {
     "@theia/cli": "1.4.0"

@@ -1,12 +1,20 @@
 {
-  "name": "binalyzer-view",
+  "name": "@binalyzer/binalyzer-view",
   "version": "0.0.0",
   "dependencies": {
-    "@theia/core": "^1.4.0"
+    "@theia/core": "^1.4.0",
+    "@eclipse-glsp/theia-integration": "0.7.0",
+    "@eclipse-glsp/client": "next"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "tslint": "^5.5.0",
+    "typescript": "^3.9.2"
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/binalyzer-view-frontend-module"
+      "frontend": "lib/browser/binalyzer-frontend-module",
+      "backend": "lib/node/binalyzer-backend-module"
     }
   ],
   "files": [
@@ -16,7 +24,8 @@
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
     "clean": "rimraf lib",
-    "build": "tsc",
+    "build": "tsc && yarn run lint",
+    "lint": "tslint -c ../configs/tslint.json --project ./tsconfig.json",
     "watch": "tsc -w"
   }
 }

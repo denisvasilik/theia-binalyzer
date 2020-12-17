@@ -17,7 +17,6 @@ import { BaseWidget, Message, PanelLayout, ViewContainer } from "@theia/core/lib
 import { Container, inject, injectable, interfaces, postConstruct } from "inversify";
 
 import { BinalyzerBindingsViewWidget } from "./binalyzer-bindings-view-widget";
-import { BinalyzerConfigurationWidget } from "./binalyzer-configuration-widget";
 
 export type BinalyzerViewWidgetFactory = () => BinalyzerViewWidget;
 export const BinalyzerViewWidgetFactory = Symbol('BinalyzerViewWidgetFactory');
@@ -28,7 +27,6 @@ export class BinalyzerViewWidget extends BaseWidget {
     static createContainer(parent: interfaces.Container): Container {
         const child = new Container({ defaultScope: 'Singleton' });
         child.parent = parent;
-        child.bind(BinalyzerConfigurationWidget).toSelf();
         child.bind(BinalyzerBindingsViewWidget).toDynamicValue(({ container }) => BinalyzerBindingsViewWidget.createWidget(container));
         child.bind(BinalyzerViewWidget).toSelf();
         return child;

@@ -14,5 +14,20 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-export * from "./glsp-contribution";
-export * from "./blsp-contribution";
+export interface BLSPContribution {
+    readonly id: string;
+    readonly name: string;
+}
+
+export namespace BLSPContribution {
+    export const servicePath = '/services/blsp';
+    export function getPath(contribution: BLSPContribution, sessionId: string = ':id'): string {
+        // return servicePath;
+        return servicePath + '/' + contribution.id + '/' + sessionId;
+    }
+    export const Service = Symbol('BLSPContributionService');
+    export interface Service {
+        create(contributionId: string, parameters: any): Promise<string>;
+        destroy(sessionId: string): Promise<void>;
+    }
+}

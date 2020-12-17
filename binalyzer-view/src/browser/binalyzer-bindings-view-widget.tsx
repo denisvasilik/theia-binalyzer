@@ -178,7 +178,11 @@ export class BinalyzerBindingsViewWidget extends TreeWidget {
      */
     protected getNodeTooltip(node: TreeNode): string | undefined {
         if (BinalyzerSymbolInformationNode.is(node)) {
-            return node.name + ` (${node.iconClass})`;
+            if (node.description == undefined) {
+                return node.name;
+            } else {
+                return node.name + ` (${node.description})`;
+            }
         }
         return undefined;
     }

@@ -15,7 +15,8 @@
  ********************************************************************************/
 import { Widget } from "@phosphor/widgets";
 import { DisposableCollection, Emitter, Event } from "@theia/core";
-import { WidgetFactory } from "@theia/core/lib/browser";
+import { OpenerService, WidgetFactory } from "@theia/core/lib/browser";
+import URI from "@theia/core/lib/common/uri";
 import { inject, injectable } from "inversify";
 
 import { BinalyzerSymbolInformationNode } from "./binalyzer-bindings-view-widget";
@@ -27,12 +28,18 @@ export class BinalyzerViewService implements WidgetFactory {
 
     id = 'binalyzer-view';
 
+    @inject(OpenerService) protected readonly openerService: OpenerService;
+
     protected widget?: BinalyzerViewWidget;
     protected readonly onDidChangeOpenStateEmitter = new Emitter<boolean>();
     protected readonly onDidChangeBindingEmitter = new Emitter<BinalyzerSymbolInformationNode[]>();
     protected readonly onDidSelectEmitter = new Emitter<BinalyzerSymbolInformationNode>();
     protected readonly onDidOpenEmitter = new Emitter<BinalyzerSymbolInformationNode>();
-    constructor(@inject(BinalyzerViewWidgetFactory) protected factory: BinalyzerViewWidgetFactory) { }
+    constructor(
+        @inject(BinalyzerViewWidgetFactory) protected factory: BinalyzerViewWidgetFactory,
+    ) {
+
+    }
 
     get onDidSelect(): Event<BinalyzerSymbolInformationNode> {
         return this.onDidSelectEmitter.event;
@@ -69,44 +76,6 @@ export class BinalyzerViewService implements WidgetFactory {
     createWidget(): Promise<Widget> {
         this.widget = this.factory();
 
-        const data0 = {
-            id: 'data0',
-            name: 'Hello World App',
-            visible: true,
-            parent: undefined,
-            children: [],
-            busy: 0,
-            iconClass: 'variable',
-            selected: false,
-            expanded: false
-        } as BinalyzerSymbolInformationNode;
-
-        const template0 = {
-            id: 'template0',
-            name: 'WASM Module Format v1.0',
-            visible: true,
-            parent: undefined,
-            children: [],
-            busy: 0,
-            iconClass: 'interface',
-            selected: false,
-            expanded: false
-        } as BinalyzerSymbolInformationNode;
-
-        const binding0 = {
-            id: 'binding0',
-            name: 'WASM Hello World App Binding',
-            visible: true,
-            parent: undefined,
-            children: [template0, data0],
-            busy: 0,
-            iconClass: '',
-            selected: false,
-            expanded: false
-        } as BinalyzerSymbolInformationNode;
-
-        this.publish([binding0]);
-
         const disposables = new DisposableCollection();
         disposables.push(this.widget.bindings.onDidChangeOpenStateEmitter.event(open => this.onDidChangeOpenStateEmitter.fire(open)));
         disposables.push(this.widget.bindings.model.onOpenNode(node => this.onDidOpenEmitter.fire(node as BinalyzerSymbolInformationNode)));
@@ -116,6 +85,18 @@ export class BinalyzerViewService implements WidgetFactory {
             this.widget = undefined;
             disposables.dispose();
         });
+
+        this.onDidSelect(selection => {
+            console.log(selection.name);
+
+            if (selection.name == 'Diagram') {
+                const uri = new URI(selection.description);
+                this.openerService.getOpener(uri).then(opener => {
+                    opener.open(uri);
+                });
+            }
+        });
+
         return Promise.resolve(this.widget);
     }
 }

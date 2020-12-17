@@ -14,5 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
+export * from './binalyzer-bindings-view-widget';
+export * from './binalyzer-view-service';
 export * from './binalyzer-view-widget';
-export * from './binalyzer-view-frontend-module';
+export * from './binalyzer-frontend-module';

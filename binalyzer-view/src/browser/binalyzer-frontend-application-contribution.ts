@@ -22,7 +22,6 @@ import { Command, CommandRegistry } from "@theia/core/lib/common/command";
 import { OS } from "@theia/core/lib/common/os";
 import { inject, injectable } from "inversify";
 
-import { BinalyzerConfigurationManager } from "./binalyzer-configuration-manager";
 import { BinalyzerViewService } from "./binalyzer-view-service";
 import { BinalyzerViewWidget } from "./binalyzer-view-widget";
 
@@ -50,9 +49,6 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
 
     @inject(BinalyzerViewService) protected readonly binalyzerViewService: BinalyzerViewService;
 
-    @inject(BinalyzerConfigurationManager)
-    protected readonly configurations: BinalyzerConfigurationManager;
-
     constructor() {
         super({
             widgetId: BINALYZER_WIDGET_FACTORY_ID,
@@ -72,9 +68,7 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
         await this.openView();
     }
 
-    async onStart(): Promise<void> {
-        this.configurations.load();
-    }
+    async onStart(): Promise<void> { }
 
     registerCommands(commands: CommandRegistry): void {
         super.registerCommands(commands);

@@ -30,7 +30,7 @@ export interface BinalyzergerDescription {
 /**
  * The WS endpoint path to the Binalyzer service.
  */
-export const BinalyzerPath = '/services/binalyzer';
+export const BinalyzerPath = '/services/blsp';
 
 /**
  * BinalyzerService symbol for DI.
