@@ -54,6 +54,11 @@ export class BinalyzerCommandContribution implements CommandContribution {
     @inject(MessageService) protected readonly messageService: MessageService;
     @inject(BinalyzerViewService) protected readonly viewService: BinalyzerViewService;
     @inject(BLSPClientContribution) readonly blspClientContribution: BLSPClientContribution;
+
+    constructor() {
+
+    }
+
     registerCommands(commands: CommandRegistry): void {
         commands.registerCommand(
             {
@@ -62,11 +67,13 @@ export class BinalyzerCommandContribution implements CommandContribution {
             },
             {
                 execute: (args) => {
-                    this.blspClientContribution.bslpClient.then(client => {
+                    const blspClient = this.blspClientContribution.bslpClient;
+                    blspClient.then((client: BLSPClient) => {
                         if (this.workspaceService.workspace) {
                             const uri = new URI(this.workspaceService.workspace.uri + '/binalyzer.json');
                             this.fileSystem.resolveContent(uri.toString()).then(file => {
                                 const obj = JSON.parse(file.content);
+                                const binding_name = obj.name;
                                 const data_filepath = obj.data;
                                 const template_filepath = obj.template;
                                 client.sendBindingMessage({
@@ -77,6 +84,7 @@ export class BinalyzerCommandContribution implements CommandContribution {
                                     const diagram = {
                                         id: 'diagram',
                                         name: 'Diagram',
+                                        description: template_filepath,
                                         visible: true,
                                         parent: undefined,
                                         children: [],
@@ -95,7 +103,8 @@ export class BinalyzerCommandContribution implements CommandContribution {
 
                                     const root = {
                                         id: binding_root.id,
-                                        name: binding_root.name,
+                                        name: binding_name,
+                                        description: binding_root.name,
                                         visible: true,
                                         parent: undefined,
                                         children: root_children,
@@ -140,6 +149,7 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
     @inject(WorkspaceService) protected readonly workspaceService: WorkspaceService;
     @inject(MessageService) protected readonly messageService: MessageService;
     @inject(WebSocketConnectionProvider) protected readonly connectionProvider: WebSocketConnectionProvider;
+    @inject(CommandRegistry) protected readonly commands: CommandRegistry;
 
     constructor() {
         this.waitForReady();
@@ -165,9 +175,11 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
             }
             const toStop = new DisposableCollection(Disposable.create(() => { })); // mark as not disposed
             this.toDeactivate.push(toStop);
-            this.doActivate(this.toDeactivate)
-                .then(() => this.initialize());
+            this.doActivate(this.toDeactivate).then(() => {
+                this.initialize();
+            });
         }
+
         return this.toDeactivate;
     }
 
@@ -199,7 +211,7 @@ export abstract class BaseBLSPClientContribution implements BLSPClientContributi
                             }
                         });
                 } else {
-
+                    this.commands.executeCommand('binalyzer-send-debug-message');
                 }
             })
         );

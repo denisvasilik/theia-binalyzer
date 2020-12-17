@@ -40,11 +40,13 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
         WebSocketConnectionProvider.createProxy(container, BLSPContribution.servicePath)
     ).inSingletonScope();
 
+    bind(CommandContribution).to(BinalyzerCommandContribution);
+
     bindContributionProvider(bind, BLSPClientContribution);
 
     bind(WidgetFactory).toService(BinalyzerViewService);
 
-    bind(CommandContribution).to(BinalyzerCommandContribution);
+
 
     //
     // GLSP
