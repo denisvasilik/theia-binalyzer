@@ -27,12 +27,12 @@ export class ExampleNavigationCommandContribution implements CommandContribution
         commands.registerCommand(
             {
                 id: 'navigate-to-element-via-query-example-command',
-                label: 'Open example1.wf task "Push"'
+                label: 'Open example1.baml task "Push"'
             },
             {
                 execute: (args) => {
                     if (this.workspaceService.workspace) {
-                        const uri = new URI(this.workspaceService.workspace.uri + '/example1.wf');
+                        const uri = new URI(this.workspaceService.workspace.uri + '/example1.baml');
                         open(this.openerService, uri, {
                             selection: { name: 'Push' }
                         });

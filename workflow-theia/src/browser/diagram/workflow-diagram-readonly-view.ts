@@ -55,8 +55,8 @@ export class WorkflowDiagramReadonlyViewContribution implements CommandContribut
                 const opener = await this.openerService.getOpener(uri, openerOptions);
                 await opener.open(uri, openerOptions);
             },
-            isVisible: (uri) => uri.toString().endsWith(".wf"),
-            isEnabled: (uri) => uri.toString().endsWith(".wf")
+            isVisible: (uri) => uri.toString().endsWith(".baml"),
+            isEnabled: (uri) => uri.toString().endsWith(".baml")
         }));
     }
 }

@@ -25,7 +25,7 @@ export interface BinalyzerInitializeOptions {
 export class BinalyzerBLSPClientContribution extends BaseBLSPClientContribution {
     readonly id = "Workflow";
     readonly name = "Workflow";
-    readonly fileExtensions = [".wf"];
+    readonly fileExtensions = [".baml"];
 
     protected createInitializeOptions(): BinalyzerInitializeOptions {
         return {
