@@ -96,10 +96,11 @@ export class BinalyzerViewService implements WidgetFactory {
                 const uri = new URI(this.workspaceService.workspace.uri + '/binalyzer.json');
                 this.fileSystem.resolveContent(uri.toString()).then(file => {
                     const obj = JSON.parse(file.content);
+                    const binding_name = obj.name;
                     const template_filepath = obj.template;
                     const uri = new URI(template_filepath);
 
-                    if (selection.name == 'Diagram') {
+                    if (selection.name == binding_name) {
                         this.openerService.getOpener(uri).then(opener => {
                             opener.open(uri);
                         });

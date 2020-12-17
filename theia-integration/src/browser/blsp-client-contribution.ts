@@ -81,21 +81,7 @@ export class BinalyzerCommandContribution implements CommandContribution {
                                     data: data_filepath
                                 }).then((binding: any) => {
                                     const binding_root = JSON.parse(binding) as BinalyzerSymbolInformationNode;
-                                    const diagram = {
-                                        id: 'diagram',
-                                        name: 'Diagram',
-                                        description: template_filepath,
-                                        visible: true,
-                                        parent: undefined,
-                                        children: [],
-                                        busy: 0,
-                                        iconClass: '',
-                                        selected: false,
-                                        expanded: false,
-                                    } as BinalyzerSymbolInformationNode;
-
                                     const root_children = [];
-                                    root_children.push(diagram);
 
                                     for (let i = 0; i < binding_root.children.length; i++) {
                                         root_children.push(binding_root.children[i]);
