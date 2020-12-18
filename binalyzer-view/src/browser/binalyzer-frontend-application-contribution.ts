@@ -19,11 +19,13 @@ import { TabBarToolbarContribution, TabBarToolbarRegistry } from "@theia/core/li
 import { AbstractViewContribution } from "@theia/core/lib/browser/shell/view-contribution";
 import { Widget } from "@theia/core/lib/browser/widgets";
 import { Command, CommandRegistry } from "@theia/core/lib/common/command";
+import { ContributionProvider } from "@theia/core/lib/common/contribution-provider";
 import { OS } from "@theia/core/lib/common/os";
-import { inject, injectable } from "inversify";
+import { inject, injectable, named } from "inversify";
 
 import { BinalyzerViewService } from "./binalyzer-view-service";
 import { BinalyzerViewWidget } from "./binalyzer-view-widget";
+import { BLSPClientContribution } from "./blsp-client-contribution";
 
 export const BINALYZER_WIDGET_FACTORY_ID = 'binalyzer-view';
 
@@ -49,6 +51,9 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
 
     @inject(BinalyzerViewService) protected readonly binalyzerViewService: BinalyzerViewService;
 
+    @inject(ContributionProvider) @named(BLSPClientContribution)
+    protected readonly BLSPcontributions: ContributionProvider<BLSPClientContribution>;
+
     constructor() {
         super({
             widgetId: BINALYZER_WIDGET_FACTORY_ID,
@@ -68,7 +73,17 @@ export class BinalyzerFrontendApplicationContribution extends AbstractViewContri
         await this.openView();
     }
 
-    async onStart(): Promise<void> { }
+    onStart(app: FrontendApplication): void {
+        for (const contribution of this.BLSPcontributions.getContributions()) {
+            contribution.activate(app);
+        }
+    }
+
+    onStop(app: FrontendApplication): void {
+        for (const contribution of this.BLSPcontributions.getContributions()) {
+            contribution.deactivate(app);
+        }
+    }
 
     registerCommands(commands: CommandRegistry): void {
         super.registerCommands(commands);

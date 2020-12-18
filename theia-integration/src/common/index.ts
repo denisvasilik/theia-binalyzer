@@ -15,4 +15,3 @@
  ********************************************************************************/
 
 export * from "./glsp-contribution";
-export * from "./blsp-contribution";

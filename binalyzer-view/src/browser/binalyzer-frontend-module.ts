@@ -15,24 +15,34 @@
  ********************************************************************************/
 import "../../src/browser/styles/index.css";
 
-import { BLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
 import { bindViewContribution, FrontendApplicationContribution, WebSocketConnectionProvider } from "@theia/core/lib/browser";
 import { TabBarToolbarContribution } from "@theia/core/lib/browser/shell/tab-bar-toolbar";
 import { WidgetFactory } from "@theia/core/lib/browser/widget-manager";
+import { CommandContribution } from "@theia/core/lib/common/command";
+import { bindContributionProvider } from "@theia/core/lib/common/contribution-provider";
 import { ContainerModule } from "inversify";
 
-import { BinalyzerPath, BinalyzerService } from "../common/binalyzer-service";
+import { BLSPContribution } from "../common";
 import { BinalyzerBLSPClientContribution } from "./binalyzer-blsp-client-contribution";
 import { BinalyzerFrontendApplicationContribution } from "./binalyzer-frontend-application-contribution";
 import { BinalyzerViewService } from "./binalyzer-view-service";
 import { BinalyzerViewWidget, BinalyzerViewWidgetFactory } from "./binalyzer-view-widget";
+import { BinalyzerCommandContribution, BLSPClientContribution } from "./blsp-client-contribution";
 
 export default new ContainerModule(bind => {
     bind(BinalyzerViewWidgetFactory).toDynamicValue(({ container }) =>
         () => BinalyzerViewWidget.createWidget(container)
     ).inSingletonScope();
 
-    bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
+    bind(BLSPContribution.Service).toDynamicValue(({ container }) =>
+        WebSocketConnectionProvider.createProxy(container, BLSPContribution.servicePath)
+    ).inSingletonScope();
+
+    //    bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
+
+    bind(CommandContribution).to(BinalyzerCommandContribution);
+
+    bindContributionProvider(bind, BLSPClientContribution);
 
     bind(BinalyzerViewService).toSelf().inSingletonScope();
     bind(WidgetFactory).toService(BinalyzerViewService);

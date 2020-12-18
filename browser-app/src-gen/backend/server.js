@@ -60,9 +60,9 @@ module.exports = (port, host, argv) => Promise.resolve()
     .then(function () { return Promise.resolve(require('@theia/plugin-ext-vscode/lib/node/plugin-vscode-backend-module')).then(load) })
     .then(function () { return Promise.resolve(require('@theia/plugin-metrics/lib/node/plugin-metrics-backend-module')).then(load) })
     .then(function () { return Promise.resolve(require('@theia/vsx-registry/lib/node/vsx-registry-backend-module')).then(load) })
-    .then(function () { return Promise.resolve(require('@binalyzer/binalyzer-view/lib/node/binalyzer-backend-module')).then(load) })
     .then(function () { return Promise.resolve(require('@eclipse-glsp/theia-integration/lib/node/glsp-backend-module')).then(load) })
     .then(function () { return Promise.resolve(require('@eclipse-glsp-examples/workflow-theia/lib/node/workflow-backend-module')).then(load) })
+    .then(function () { return Promise.resolve(require('@binalyzer/binalyzer-view/lib/node/binalyzer-backend-module')).then(load) })
     .then(() => start(port, host, argv)).catch(reason => {
         console.error('Failed to start the backend application.');
         if (reason) {

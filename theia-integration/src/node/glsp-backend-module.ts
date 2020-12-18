@@ -17,35 +17,12 @@ import { bindContributionProvider, ConnectionHandler, ILogger, JsonRpcConnection
 import { MessagingService } from "@theia/core/lib/node/messaging/messaging-service";
 import { ContainerModule } from "inversify";
 
-import { BLSPContribution, GLSPContribution } from "../common";
-import { BLSPBackendContribution } from "./blsp-backend-contribution";
-import { BLSPServerContribution } from "./blsp-server-contribution";
+import { GLSPContribution } from "../common";
 import { GLSPBackendContribution } from "./glsp-backend-contribution";
 import { GLSPServerContribution } from "./glsp-server-contribution";
 
 
 export default new ContainerModule(bind => {
-    //
-    // BLSP
-    //
-    bind(BLSPBackendContribution).toSelf().inSingletonScope();
-    bind(MessagingService.Contribution).toService(BLSPBackendContribution);
-    bind(BLSPContribution.Service).toService(BLSPBackendContribution);
-    bindContributionProvider(bind, BLSPServerContribution);
-
-    bind(ConnectionHandler).toDynamicValue(ctx =>
-        new JsonRpcConnectionHandler(BLSPContribution.servicePath, () =>
-            ctx.container.get(BLSPContribution.Service)
-        )
-    ).inSingletonScope();
-
-    bind(ILogger).toDynamicValue(ctx => {
-        const logger = ctx.container.get<ILogger>(ILogger);
-        return logger.child('blsp');
-    }).inSingletonScope().whenTargetNamed('blsp');
-    //
-    // GLSP
-    //
     bind(GLSPBackendContribution).toSelf().inSingletonScope();
     bind(MessagingService.Contribution).toService(GLSPBackendContribution);
     bind(GLSPContribution.Service).toService(GLSPBackendContribution);

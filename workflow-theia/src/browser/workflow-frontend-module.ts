@@ -41,7 +41,6 @@ import {
     WorkflowTaskEditCommandContribution,
     WorkflowTaskEditMenuContribution
 } from "./diagram/workflow-task-editing-context-menu";
-import { ExampleNavigationCommandContribution } from "./external-navigation-example/external-navigation-example";
 import { WorkflowGLSPClientContribution } from "./language/workflow-glsp-client-contribution";
 
 export default new ContainerModule((bind: interfaces.Bind) => {
@@ -63,9 +62,6 @@ export default new ContainerModule((bind: interfaces.Bind) => {
     bind(MenuContribution).to(WorkflowNavigationMenuContribution).inSingletonScope();
     bind(KeybindingContext).to(WorkflowDiagramKeybindingContext).inSingletonScope();
     bind(KeybindingContribution).to(WorkflowKeybindingContribution).inSingletonScope();
-
-    // Example for a command that navigates to an element in a diagram with a query resolved by the server
-    bind(CommandContribution).to(ExampleNavigationCommandContribution).inSingletonScope();
 
     // Readonly workflow diagram view
     bind(WorkflowDiagramReadonlyViewContribution).toSelf().inSingletonScope();

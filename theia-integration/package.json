@@ -35,8 +35,6 @@
     "sprotty-theia": "0.9.0",
     "@eclipse-glsp/client": "next",
     "@eclipse-glsp/protocol": "next",
-    "@eclipse-blsp/protocol": "0.7.0",
-    "@binalyzer/binalyzer-view": "0.0.0",
     "@theia/messages": "1.4.0"
   },
   "devDependencies": {

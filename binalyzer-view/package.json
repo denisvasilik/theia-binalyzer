@@ -4,6 +4,7 @@
   "dependencies": {
     "@theia/core": "^1.4.0",
     "@eclipse-glsp/theia-integration": "0.7.0",
+    "@eclipse-blsp/protocol": "0.7.0",
     "@eclipse-glsp/client": "next"
   },
   "devDependencies": {

@@ -13,11 +13,37 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { BLSPServerContribution } from "@eclipse-glsp/theia-integration/lib/node";
+import { bindContributionProvider } from "@theia/core/lib/common/contribution-provider";
+import { ILogger } from "@theia/core/lib/common/logger";
+import { ConnectionHandler } from "@theia/core/lib/common/messaging/handler";
+import { JsonRpcConnectionHandler } from "@theia/core/lib/common/messaging/proxy-factory";
+import { MessagingService } from "@theia/core/lib/node/messaging/messaging-service";
 import { ContainerModule } from "inversify";
 
+import { BLSPContribution } from "../common/blsp-contribution";
 import { BinalyzerServerContribution } from "./binalyzer-blsp-server-contribution";
+import { BLSPBackendContribution } from "./blsp-backend-contribution";
+import { BLSPServerContribution } from "./blsp-server-contribution";
 
 export default new ContainerModule(bind => {
     bind(BLSPServerContribution).to(BinalyzerServerContribution).inSingletonScope();
+
+    //
+    // BLSP
+    //
+    bind(BLSPBackendContribution).toSelf().inSingletonScope();
+    bind(MessagingService.Contribution).toService(BLSPBackendContribution);
+    bind(BLSPContribution.Service).toService(BLSPBackendContribution);
+    bindContributionProvider(bind, BLSPServerContribution);
+
+    bind(ConnectionHandler).toDynamicValue(ctx =>
+        new JsonRpcConnectionHandler(BLSPContribution.servicePath, () =>
+            ctx.container.get(BLSPContribution.Service)
+        )
+    ).inSingletonScope();
+
+    bind(ILogger).toDynamicValue(ctx => {
+        const logger = ctx.container.get<ILogger>(ILogger);
+        return logger.child('blsp');
+    }).inSingletonScope().whenTargetNamed('blsp');
 });

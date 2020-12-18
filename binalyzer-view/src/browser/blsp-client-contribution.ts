@@ -18,7 +18,6 @@ import "../../css/diagram.css";
 import "../../css/theia-dialogs.css";
 import "../../css/tool-palette.css";
 
-import { BinalyzerSymbolInformationNode, BinalyzerViewService } from "@binalyzer/binalyzer-view/lib/browser";
 import {
     ApplicationIdProvider,
     BLSPClient,
@@ -43,6 +42,8 @@ import { inject, injectable } from "inversify";
 import { MessageConnection } from "vscode-jsonrpc";
 
 import { BLSPContribution } from "../common";
+import { BinalyzerSymbolInformationNode } from "./binalyzer-bindings-view-widget";
+import { BinalyzerViewService } from "./binalyzer-view-service";
 import { TheiaJsonrpcBLSPClient } from "./theia-jsonrpc-blsp-client";
 
 export const BLSPClientContribution = Symbol.for('BLSPClientContribution');

@@ -13,8 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { BaseBLSPClientContribution } from "@eclipse-glsp/theia-integration/lib/browser";
 import { injectable } from "inversify";
+
+import { BaseBLSPClientContribution } from "./blsp-client-contribution";
 
 export interface BinalyzerInitializeOptions {
     timestamp: Date,
