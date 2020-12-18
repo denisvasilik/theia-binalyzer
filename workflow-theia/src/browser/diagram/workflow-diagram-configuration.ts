@@ -51,6 +51,23 @@ export class WorkflowDiagramConfiguration implements DiagramConfiguration {
         const container = createWorkflowDiagramContainer(widgetId);
         container.bind(TYPES.ModelSource).to(WorkflowDiagramServer).inSingletonScope();
         container.bind(TheiaDiagramServer).toService(WorkflowDiagramServer);
+
+        // if (!container.isBound(EditorContextService)) {
+        //     container.bind(EditorContextService).toSelf().inSingletonScope();
+        // }
+
+        // container.bind(GLSP_TYPES.IEditorContextServiceProvider).toProvider<EditorContextService>(ctx => {
+        //     return () => {
+        //         return new Promise<EditorContextService>((resolve, reject) => {
+        //             if (ctx.container.isBound(EditorContextService)) {
+        //                 resolve(ctx.container.get<EditorContextService>(EditorContextService));
+        //             } else {
+        //                 reject();
+        //             }
+        //         });
+        //     };
+        // });
+
         // container.rebind(KeyTool).to(TheiaKeyTool).inSingletonScope()
         container.bind(TYPES.IActionHandlerInitializer).to(TheiaSprottySelectionForwarder);
         container.bind(SelectionService).toConstantValue(this.selectionService);

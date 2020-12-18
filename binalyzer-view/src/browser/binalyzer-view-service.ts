@@ -100,17 +100,14 @@ export class BinalyzerViewService implements WidgetFactory {
                     const template_filepath = obj.template;
                     const uri = new URI(template_filepath);
 
-                    if (selection.name == binding_name) {
-                        this.openerService.getOpener(uri).then(opener => {
-                            opener.open(uri);
+                    if (selection.name == binding_name)
+                        return;
+
+                    this.openerService.getOpener(uri).then(opener => {
+                        opener.open(uri, {
+                            selection: { name: selection.id }
                         });
-                    } else {
-                        this.openerService.getOpener(uri).then(opener => {
-                            opener.open(uri, {
-                                selection: { name: selection.id }
-                            });
-                        });
-                    }
+                    });
                 });
             }
         });

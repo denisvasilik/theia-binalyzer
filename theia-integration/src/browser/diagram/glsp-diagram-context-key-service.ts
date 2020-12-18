@@ -91,7 +91,13 @@ export abstract class AbstractGLSPDiagramContextKeyService {
     }
 
     protected getEditorContextService(glspDiagramWidget: GLSPDiagramWidget): EditorContextService {
-        return glspDiagramWidget.diContainer.get(EditorContextService);
+        if (!glspDiagramWidget.diContainer.isBound(EditorContextService)) {
+            glspDiagramWidget.diContainer.bind(EditorContextService).toSelf().inSingletonScope();
+        }
+        if (glspDiagramWidget.diContainer.isBound(EditorContextService)) {
+            return glspDiagramWidget.diContainer.get(EditorContextService);
+        }
+        throw new Error('EditorContextService is not bound to DI container.');
     }
 
     protected getDiagramWidget() {

@@ -13,6 +13,14 @@
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
                 {
+                    "url": "webpack:///node_modules/sprotty/src/base/di.config.ts",
+                    "path": "${workspaceFolder}/workflow-sprotty/src/di.config.ts"
+                },
+                {
+                    "url": "webpack:///node_modules/sprotty/src/base/di.config.ts",
+                    "path": "${workspaceFolder}/client/src/base/di.config.ts"
+                },
+                {
                     "url": "webpack:///binalyzer-view",
                     "path": "${workspaceFolder}/binalyzer-view"
                 },
@@ -31,6 +39,10 @@
                 {
                     "url": "webpack:///workflow-theia",
                     "path": "${workspaceFolder}/workflow-theia"
+                },
+                {
+                    "url": "webpack:///workflow-sprotty",
+                    "path": "${workspaceFolder}/workflow-sprotty"
                 }
             ]
         },
@@ -54,7 +66,8 @@
                 "${workspaceRoot}/browser-app/src-gen/**/*.js",
                 "${workspaceRoot}/binalyzer-view/lib/browser/*.js",
                 "${workspaceRoot}/workflow-theia/lib/**/*.js",
-                "${workspaceRoot}/theia-integration/lib/**/*.js",
+                "${workspaceRoot}/workflow-sprotty/lib/**/*.js",
+                "${workspaceRoot}/theia-integration/lib/**/*.js"
             ],
             "smartStep": true,
             "internalConsoleOptions": "openOnSessionStart",

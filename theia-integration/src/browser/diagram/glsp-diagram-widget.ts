@@ -101,7 +101,13 @@ export class GLSPDiagramWidget extends DiagramWidget implements SaveableSource {
     }
 
     get editorContext(): EditorContextService {
-        return this.diContainer.get(EditorContextService);
+        if (!this.diContainer.isBound(EditorContextService)) {
+            this.diContainer.bind(EditorContextService).toSelf().inSingletonScope();
+        }
+        if (this.diContainer.isBound(EditorContextService)) {
+            return this.diContainer.get(EditorContextService);
+        }
+        throw new Error('EditorContextService is not bound to DI container.');
     }
 
     handleCopy(e: ClipboardEvent) {
