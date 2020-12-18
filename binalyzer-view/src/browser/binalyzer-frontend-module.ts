@@ -38,8 +38,6 @@ export default new ContainerModule(bind => {
         WebSocketConnectionProvider.createProxy(container, BLSPContribution.servicePath)
     ).inSingletonScope();
 
-    //    bind(BinalyzerService).toDynamicValue(context => WebSocketConnectionProvider.createProxy(context.container, BinalyzerPath)).inSingletonScope();
-
     bind(CommandContribution).to(BinalyzerCommandContribution);
 
     bindContributionProvider(bind, BLSPClientContribution);
