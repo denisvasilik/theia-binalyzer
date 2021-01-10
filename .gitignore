@@ -2,6 +2,7 @@
 .nyc_output/
 node_modules/
 lib/
+!client/src/lib
 artifacts/
 bundle.js
 bundle.js.map
@@ -9,7 +10,6 @@ npm-debug.log
 yarn-error.log
 plugins/
 *.log
-yarn.lock
 theia-binalyzer-glsp.jar
 
 examples/browser-app/**
